@@ -22,6 +22,10 @@ public class SessionFilter extends OncePerRequestFilter {
 
         log.info(this.getClass().getName());
         final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (request.getServletPath().equals("/logintoken/login")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         if (isEmpty(header) || !header.startsWith(Constantes.BEARER)) { //dice Oscar que no dejemos esto (???)
             filterChain.doFilter(request, response);
             log.warn(Constantes.CABECERA_SIN_BEARER);

@@ -26,6 +26,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         logger.info(this.getClass().getName());
         String token = request.getParameter(Constantes.TOKEN);
         Key key = configurationBeans.key();
+        if (request.getServletPath().equals("/logintoken/login")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         try {
             configurationTokens.validarToken(token, key);
         } catch (Exception e) {

@@ -27,7 +27,7 @@ public class ConfigurationTokens {
 
 
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public String crearToken(String nombreUsuario, Key key){
+    public String crearToken(String nombreUsuario, Key key) {
         return Jwts.builder()
                 .setSubject(Constantes.SUBJECT)
                 .setIssuer(Constantes.ISSUER)
