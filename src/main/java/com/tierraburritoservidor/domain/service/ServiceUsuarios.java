@@ -38,6 +38,10 @@ public class ServiceUsuarios {
     }
 
     public Usuario getUsuarioByNombre(String nombre) {
-        return repositoryUsuarios.getUsuarioByNombre(nombre);
+        Usuario usuario = repositoryUsuarios.getUsuarioByNombre(nombre);
+        if (usuario == null){
+            throw new UsuarioNoEncontradoException();
+        }
+        return usuario;
     }
 }

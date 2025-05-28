@@ -1,27 +1,26 @@
 package com.tierraburritoservidor.ui.controllers;
 
-import com.tierraburritoservidor.domain.model.Producto;
+
+import com.tierraburritoservidor.domain.model.Plato;
+import com.tierraburritoservidor.domain.service.ServicePlatos;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@RestController()
-@RequestMapping("/productos")
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/platos")
 public class PlatosRestController {
 
-    @GetMapping("/platos")
-    public List<Producto> getPlatos(){
-        List<Producto> productos = new ArrayList<>();
-        productos.add(new Producto(
-                1,
-                "Tacos del pastor",
-                5.99,
-                "foto.jpg"
-        ));
-        return productos;
+    private final ServicePlatos servicePlatos;
+
+    @GetMapping("")
+    public List<Plato> getAllPlatos() {
+        return servicePlatos.getAllPlatos();
     }
+
 
 }

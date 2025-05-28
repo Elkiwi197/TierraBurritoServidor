@@ -1,6 +1,7 @@
 package com.tierraburritoservidor.dao;
 
 
+import com.tierraburritoservidor.domain.model.Ingredientes;
 import com.tierraburritoservidor.domain.model.Producto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -12,11 +13,26 @@ import java.util.List;
 public class RepositoryProductos {
 
     private List<Producto> productos = List.of(
-            new Producto(1, "Nachos", 5.99, "https://b2291319.smushcdn.com/2291319/wp-content/uploads/02_Nachos-1.jpg?lossy=1&strip=1&webp=1"),
-            new Producto(2, "Burrito", 12.99, "https://b2291319.smushcdn.com/2291319/wp-content/uploads/03_Burrito.jpg?lossy=1&strip=1&webp=1"),
-            new Producto(3, "Tacos", 8.99, "https://b2291319.smushcdn.com/2291319/wp-content/uploads/06_Tacos.jpg?lossy=1&strip=1&webp=1"),
-            new Producto(4, "Desnudo", 10.99, "https://b2291319.smushcdn.com/2291319/wp-content/uploads/Desnudo_2.jpg?lossy=1&strip=1&webp=1"),
-            new Producto(5, "Ensalada", 9.99, "https://b2291319.smushcdn.com/2291319/wp-content/uploads/Ensalada_1-2.jpg?lossy=1&strip=1&webp=1")
+            new Producto(1, Ingredientes.ARROZ_BLANCO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/ArrozBlanco-1140x1050.png"),
+            new Producto(2, Ingredientes.ARROZ_INTEGRAL.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/ArrozIntegral-1140x1050.png"),
+            new Producto(3, Ingredientes.CARNE_BBQ.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Carnitas-1-1-1140x1050.jpg"),
+            new Producto(4, Ingredientes.CARNITAS.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Carnitas-1-1140x1050.jpg"),
+            new Producto(5, Ingredientes.CREMA_AGRIA.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/SalsaAgria-1140x1050.jpg"),
+            new Producto(6, Ingredientes.FRIJOLES.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Frijoles-1-1140x1050.jpg"),
+            new Producto(7, Ingredientes.GUACAMOLE.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Guacamole-1140x1050.png"),
+            new Producto(8, Ingredientes.JALAPENOS.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/chipotle-1140x1050.png"),
+            new Producto(9, Ingredientes.LECHUGA.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Ensalada-1140x1050.jpg"),
+            new Producto(10, Ingredientes.MAIZ.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Maiz-1-1140x1050.jpg"),
+            new Producto(11, Ingredientes.PICO_DE_GALLO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Picodegallo-1140x1050.jpg"),
+            new Producto(12, Ingredientes.POLLO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Pollo-1-1140x1050.jpg"),
+            new Producto(13, Ingredientes.QUESO_RALLADO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Queso-1140x1050.jpg"),
+            new Producto(14, Ingredientes.SALSA_666.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Salsa666-1140x1050.jpg"),
+            new Producto(15, Ingredientes.SALSA_CHIPOTLE.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Salsachipotle-1140x1050.jpg"),
+            new Producto(16, Ingredientes.STEAK.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Steak-1140x1050.png"),
+            new Producto(17, Ingredientes.SALSA_MEDIA.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/SalsaMedia-1140x1050.jpg"),
+            new Producto(18, Ingredientes.SALSA_VERDE.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/SalsaVerde-1140x1050.jpg"),
+            new Producto(19, Ingredientes.SALSA_DE_QUESO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/SalsaQueso-1140x1050.jpg"),
+            new Producto(20, Ingredientes.VERDURAS.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Verduras-1140x1050.png")
     );
 
     public List<Producto> getProductos() {
@@ -55,7 +71,7 @@ public class RepositoryProductos {
 
     public Producto getProductoByNombre(String nombre) {
         return productos.stream()
-                .filter(p -> p.getNombre().equals(nombre))
+                .filter(p -> p.getNombre().equalsIgnoreCase(nombre))
                 .findFirst()
                 .orElse(null);
     }

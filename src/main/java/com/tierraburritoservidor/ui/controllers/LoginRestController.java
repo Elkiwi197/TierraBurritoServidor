@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Key;
 
 @RestController
-@RequestMapping("/logintoken")
+@RequestMapping("")
 @RequiredArgsConstructor
 public class LoginRestController {
 
