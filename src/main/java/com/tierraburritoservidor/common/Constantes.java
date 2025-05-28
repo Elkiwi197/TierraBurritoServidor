@@ -7,6 +7,8 @@ public class Constantes {
 
 
 
+
+    public static final String VALIDANDO_TOKEN = "Validando token";
     public static final String SUBJECT = "Para el servidor";
     public static final String ISSUER = "Servidor";
     public static final String NOMBRE_USUARIO = "NombreUsuario";

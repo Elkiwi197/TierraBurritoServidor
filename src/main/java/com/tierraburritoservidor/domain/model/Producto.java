@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Plato {
+public class Producto {
     private int id;
     private String nombre;
     private double precio;

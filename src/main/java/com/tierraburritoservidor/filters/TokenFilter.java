@@ -9,41 +9,36 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.security.Key;
+import org.springframework.http.HttpHeaders;
 
+@Component
 @Log4j2
 @RequiredArgsConstructor
-public class JwtTokenFilter extends OncePerRequestFilter {
+public class TokenFilter extends OncePerRequestFilter {
 
     private final ConfigurationTokens configurationTokens;
     private final ConfigurationBeans configurationBeans;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        logger.info(this.getClass().getName());
-        String token = request.getParameter(Constantes.TOKEN);
-        Key key = configurationBeans.key();
-        if (request.getServletPath().equals("/logintoken/login")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+        log.info(this.getClass().getSimpleName(), Constantes.VALIDANDO_TOKEN);
+
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION).split(" ")[1].trim();
         try {
-            configurationTokens.validarToken(token, key);
-        } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, Constantes.NO_AUTORIZADO);
+            configurationTokens.validarToken(token, configurationBeans.key());
+        } catch (Exception e){
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         }
         filterChain.doFilter(request, response);
-
     }
-
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    protected boolean shouldNotFilter(HttpServletRequest request){
         String path = request.getRequestURI();
-        return "/logintoken/login".equals(path); //todo meterlo en constantes
+        return path.contains("/signup") || path.contains("/login");
     }
-
 }
