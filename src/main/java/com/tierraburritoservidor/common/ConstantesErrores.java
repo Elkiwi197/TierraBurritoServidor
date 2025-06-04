@@ -8,6 +8,8 @@ public class ConstantesErrores {
 
 
 
+
+    public static final String TOKEN_CADUCADO = "Token caducado";
     public static final String CORREO_YA_EXISTE = "Ya existe una cuenta con este correo";
     public static final String USUARIO_O_CONTRASENA_INCORRECTOS = "Usuario o contraseña incorrectos";
     public static final String USUARIO_NO_ENCONTRADO = "Usuario no encontrado";

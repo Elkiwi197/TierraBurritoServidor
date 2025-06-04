@@ -25,9 +25,6 @@ public class ServicePedidos {
         return pedido;
     }
 
-    public List<Pedido> getPedidoByUsuarioId(int idUsuario) {
-        return repositoryPedidos.getPedidosByUsuario(idUsuario);
-    }
 
     public Pedido getPedidoActual(String correoCliente) {
         Pedido pedido = repositoryPedidos.getPedidoActual(correoCliente);

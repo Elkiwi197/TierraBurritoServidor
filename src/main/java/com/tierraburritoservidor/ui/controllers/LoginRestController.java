@@ -1,15 +1,16 @@
 package com.tierraburritoservidor.ui.controllers;
 
 
-import com.tierraburritoservidor.config.ConfigurationBeans;
+import com.tierraburritoservidor.common.Constantes;
+import com.tierraburritoservidor.config.auth.AuthenticationResponse;
 import com.tierraburritoservidor.config.auth.ConfigurationTokens;
 import com.tierraburritoservidor.domain.service.ServiceUsuarios;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Key;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("")
@@ -17,13 +18,32 @@ import java.security.Key;
 public class LoginRestController {
 
     private final ConfigurationTokens configurationTokens;
-    private final ConfigurationBeans configurationBeans;
     private final ServiceUsuarios serviceUsuarios;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestParam @NotBlank String correo, @RequestParam @NotBlank String contrasena) {
+    public ResponseEntity<AuthenticationResponse> login(@RequestParam @NotBlank String correo, @RequestParam @NotBlank String contrasena) {
         serviceUsuarios.comprobarCredenciales(correo, contrasena);
-        Key key = configurationBeans.key();
-        return ResponseEntity.ok().body(configurationTokens.crearToken(correo, key));
+        String accessToken = configurationTokens.crearToken(correo, 1200);
+        String refreshToken = configurationTokens.crearToken(correo, 3600000);
+        return ResponseEntity.ok().body(
+                AuthenticationResponse.builder()
+                        .accessToken(accessToken)
+                        .refreshToken(refreshToken)
+                        .build());
+    }
+
+    @PostMapping("auth/refresh")
+    public AuthenticationResponse refresh(@RequestBody String refreshToken) {
+
+        if (!configurationTokens.validarToken(refreshToken)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constantes.TOKEN_INVALIDO);
+        }
+
+        String correoUsuario = configurationTokens.getCorreo(refreshToken);
+        String newAccessToken = configurationTokens.crearToken(correoUsuario, 1200000);
+
+        return AuthenticationResponse.builder()
+                .accessToken(newAccessToken)
+                .build();
     }
 }

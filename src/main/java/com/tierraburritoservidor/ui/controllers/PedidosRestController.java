@@ -21,11 +21,6 @@ public class PedidosRestController {
         return servicePedidos.getPedidoById(id);
     }
 
-    @GetMapping("/usuario/{id}")
-    public List<Pedido> getPedidosByUsuario(@PathVariable int id) {
-        return servicePedidos.getPedidoByUsuarioId(id);
-    }
-
     @GetMapping("/usuario/{correoCliente}")
     public Pedido getPedidoActualByUsuario(@PathVariable String correoCliente) {
         return servicePedidos.getPedidoActual(correoCliente);

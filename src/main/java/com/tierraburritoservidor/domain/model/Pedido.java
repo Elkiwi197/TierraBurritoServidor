@@ -11,7 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 public class Pedido {
     private int id;
-    private int idCliente;
     private String direccion;
     private String correoCliente;
     private List<Plato> platos;

@@ -1,17 +1,16 @@
 package com.tierraburritoservidor.config.auth;
 
 
-import com.tierraburritoservidor.common.Constantes;
+import com.tierraburritoservidor.errors.exceptions.TokenCaducadoException;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 
 import java.security.Key;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
 
 @Configuration
@@ -19,26 +18,38 @@ import java.util.Date;
 @Log4j2
 public class ConfigurationTokens {
 
+    private final Key key;
 
-    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public String crearToken(String nombreUsuario, Key key) {
+    public String crearToken(String username, int time) {
         return Jwts.builder()
-                .setSubject(Constantes.SUBJECT)
-                .setIssuer(Constantes.ISSUER)
-                .setExpiration(Date.from(LocalDateTime.now().plusSeconds(600).atZone(ZoneId.systemDefault()).toInstant()))
-                .claim(Constantes.NOMBRE_USUARIO, nombreUsuario)
-                .signWith(key)
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + time ))
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public boolean validarToken(String token, Key key) {
-        Jwts.parserBuilder()
+    public boolean validarToken(String token) {
+        try {
+
+            Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+        } catch (ExpiredJwtException e){
+            log.error(e.getMessage());
+            throw new TokenCaducadoException();
+        }
+        return true;
+    }
+
+    public String getCorreo(String token) {
+        Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
-                .parseClaimsJws(token);
-        return true;
-
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getSubject();
     }
 
 }

@@ -73,6 +73,14 @@ public class ExceptionHandlers {
     }
 
 
+    @ExceptionHandler(TokenCaducadoException.class)
+    public ResponseEntity<ApiError> handleException(TokenCaducadoException e) {
+        ApiError apiError = new ApiError(e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
+    }
+
+
+
 
 
 }
