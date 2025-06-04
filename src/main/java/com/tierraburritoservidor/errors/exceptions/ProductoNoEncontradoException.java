@@ -1,4 +1,4 @@
-package com.tierraburritoservidor.errors;
+package com.tierraburritoservidor.errors.exceptions;
 
 import com.tierraburritoservidor.common.ConstantesErrores;
 

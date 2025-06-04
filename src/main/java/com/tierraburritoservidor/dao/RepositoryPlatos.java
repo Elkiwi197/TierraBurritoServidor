@@ -12,7 +12,7 @@ import java.util.List;
 public class RepositoryPlatos {
 
 
-    private List<Plato> platos = List.of(
+    private final List<Plato> platos = List.of(
             new Plato(1, "Nachos", List.of(
                     Ingredientes.FRIJOLES, Ingredientes.PICO_DE_GALLO, Ingredientes.SALSA_DE_QUESO, Ingredientes.GUACAMOLE, Ingredientes.CREMA_AGRIA
             ), List.of(), 5.99, "https://www.tierraburritos.com/wp-content/uploads/02_Nachos-1.jpg"),

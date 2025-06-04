@@ -8,6 +8,7 @@ public class Constantes {
 
 
 
+
     public static final String VALIDANDO_TOKEN = "Validando token";
     public static final String SUBJECT = "Para el servidor";
     public static final String ISSUER = "Servidor";
@@ -18,5 +19,6 @@ public class Constantes {
     public static final String TOKEN = "token";
     public static final String NO_AUTORIZADO = "No autorizado";
     public static final String CABECERA_SIN_BEARER  = "La llamada no tiene bearer en la cabecera";
+    public static final String USUARIO_ACTIVADO = "Usuario activado";
 
 }

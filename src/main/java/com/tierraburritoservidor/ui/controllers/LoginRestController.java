@@ -2,7 +2,7 @@ package com.tierraburritoservidor.ui.controllers;
 
 
 import com.tierraburritoservidor.config.ConfigurationBeans;
-import com.tierraburritoservidor.config.ConfigurationTokens;
+import com.tierraburritoservidor.config.auth.ConfigurationTokens;
 import com.tierraburritoservidor.domain.service.ServiceUsuarios;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +21,9 @@ public class LoginRestController {
     private final ServiceUsuarios serviceUsuarios;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestParam @NotBlank String nombreUsuario, @RequestParam @NotBlank String contrasena) {
-        serviceUsuarios.comprobarCredenciales(nombreUsuario, contrasena);
+    public ResponseEntity<String> login(@RequestParam @NotBlank String correo, @RequestParam @NotBlank String contrasena) {
+        serviceUsuarios.comprobarCredenciales(correo, contrasena);
         Key key = configurationBeans.key();
-        return ResponseEntity.ok().body(configurationTokens.crearToken(nombreUsuario, key));
+        return ResponseEntity.ok().body(configurationTokens.crearToken(correo, key));
     }
 }

@@ -12,7 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RepositoryProductos {
 
-    private List<Producto> productos = List.of(
+    private final List<Producto> productos = List.of(
             new Producto(1, Ingredientes.ARROZ_BLANCO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/ArrozBlanco-1140x1050.png"),
             new Producto(2, Ingredientes.ARROZ_INTEGRAL.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/ArrozIntegral-1140x1050.png"),
             new Producto(3, Ingredientes.CARNE_BBQ.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Carnitas-1-1-1140x1050.jpg"),

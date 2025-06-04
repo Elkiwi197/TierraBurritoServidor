@@ -11,4 +11,6 @@ public class Usuario {
     private String contrasena;
     private String correo;
     private TipoUsuario tipoUsuario;
+    private boolean activado;
+    private String codigoActivacion;
 }

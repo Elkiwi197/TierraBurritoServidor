@@ -1,4 +1,4 @@
-package com.tierraburritoservidor.config;
+package com.tierraburritoservidor.config.auth;
 
 
 import com.tierraburritoservidor.common.Constantes;
@@ -25,7 +25,7 @@ public class ConfigurationTokens {
         return Jwts.builder()
                 .setSubject(Constantes.SUBJECT)
                 .setIssuer(Constantes.ISSUER)
-                .setExpiration(Date.from(LocalDateTime.now().plusSeconds(60).atZone(ZoneId.systemDefault()).toInstant())) //todo cambiar los segundos cuando acabe de hacer la api
+                .setExpiration(Date.from(LocalDateTime.now().plusSeconds(600).atZone(ZoneId.systemDefault()).toInstant()))
                 .claim(Constantes.NOMBRE_USUARIO, nombreUsuario)
                 .signWith(key)
                 .compact();

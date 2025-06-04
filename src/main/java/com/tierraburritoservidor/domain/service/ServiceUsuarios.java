@@ -2,11 +2,15 @@ package com.tierraburritoservidor.domain.service;
 
 import com.tierraburritoservidor.dao.RepositoryUsuarios;
 import com.tierraburritoservidor.domain.model.Usuario;
-import com.tierraburritoservidor.errors.CorreoYaExisteException;
-import com.tierraburritoservidor.errors.UsuarioContrasenaIncorrectosException;
-import com.tierraburritoservidor.errors.UsuarioNoEncontradoException;
+import com.tierraburritoservidor.errors.exceptions.CodigoActivacionIncorrectoException;
+import com.tierraburritoservidor.errors.exceptions.CorreoYaExisteException;
+import com.tierraburritoservidor.errors.exceptions.UsuarioContrasenaIncorrectosException;
+import com.tierraburritoservidor.errors.exceptions.UsuarioYaActivadoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.security.SecureRandom;
+import java.util.Base64;
 
 @Service
 @RequiredArgsConstructor
@@ -14,34 +18,45 @@ public class ServiceUsuarios {
 
     private final RepositoryUsuarios repositoryUsuarios;
 
-    public boolean comprobarCredenciales(String nombre, String contrasena) {
-        Usuario usuario = repositoryUsuarios.getUsuarioByNombre(nombre);
-        if (usuario != null) {
-            if (usuario.getContrasena().equals(contrasena)){
-                return true;
-            } else {
-                throw new UsuarioContrasenaIncorrectosException();
-            }
-        } else {
-            throw new UsuarioNoEncontradoException();
+    public void comprobarCredenciales(String correo, String contrasena) {
+        Usuario usuario = repositoryUsuarios.getUsuarioByCorreo(correo);
+        if (!usuario.getContrasena().equals(contrasena)) {
+            throw new UsuarioContrasenaIncorrectosException();
         }
     }
 
-    public int addUsuario(Usuario usuario) {
-        if (repositoryUsuarios.getUsuarios()
+    public String crearUsuarioDesactivado(Usuario usuario) {
+        byte[] salt = new byte[16];
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.nextBytes(salt);
+        String codigo = Base64.getUrlEncoder().encodeToString(salt);
+        if (repositoryUsuarios.getUsuariosActivados()
                 .stream()
                 .noneMatch(u -> u.getCorreo().equals(usuario.getCorreo()))) {
-            return repositoryUsuarios.addUsuario(usuario);
+            usuario.setActivado(false);
+            usuario.setCodigoActivacion(codigo);
+            return repositoryUsuarios.crearUsuarioDesactivado(usuario);
         } else {
             throw new CorreoYaExisteException();
         }
     }
 
-    public Usuario getUsuarioByNombre(String nombre) {
-        Usuario usuario = repositoryUsuarios.getUsuarioByNombre(nombre);
-        if (usuario == null){
-            throw new UsuarioNoEncontradoException();
+
+    public void activarUsuario(int id, String codigo) {
+        Usuario usuario = repositoryUsuarios.getUsuarioById(id);
+        if (!usuario.isActivado()) {
+            if (usuario.getCodigoActivacion().equals(codigo)) {
+                repositoryUsuarios.activarUsuario(id);
+            } else {
+                throw new CodigoActivacionIncorrectoException();
+            }
+        } else {
+            throw new UsuarioYaActivadoException();
         }
-        return usuario;
+
+    }
+
+    public Usuario getUsuarioByCorreo(String correo) {
+        return repositoryUsuarios.getUsuarioByCorreo(correo);
     }
 }

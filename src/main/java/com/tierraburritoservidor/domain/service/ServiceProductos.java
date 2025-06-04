@@ -3,7 +3,7 @@ package com.tierraburritoservidor.domain.service;
 
 import com.tierraburritoservidor.dao.RepositoryProductos;
 import com.tierraburritoservidor.domain.model.Producto;
-import com.tierraburritoservidor.errors.ProductoNoEncontradoException;
+import com.tierraburritoservidor.errors.exceptions.ProductoNoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

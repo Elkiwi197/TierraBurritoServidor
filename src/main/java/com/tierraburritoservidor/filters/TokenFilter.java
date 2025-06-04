@@ -2,7 +2,7 @@ package com.tierraburritoservidor.filters;
 
 import com.tierraburritoservidor.common.Constantes;
 import com.tierraburritoservidor.config.ConfigurationBeans;
-import com.tierraburritoservidor.config.ConfigurationTokens;
+import com.tierraburritoservidor.config.auth.ConfigurationTokens;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,6 +39,6 @@ public class TokenFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request){
         String path = request.getRequestURI();
-        return path.contains("/signup") || path.contains("/login");
+        return path.contains("/signup") || path.contains("/login") || path.contains("/favicon");
     }
 }

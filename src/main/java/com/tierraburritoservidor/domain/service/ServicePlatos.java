@@ -16,4 +16,8 @@ public class ServicePlatos {
     public List<Plato> getAllPlatos() {
         return repositoryPlatos.getAllPlatos();
     }
+
+    public Plato getPlatoById(int id) {
+        return repositoryPlatos.getPlatoById(id);
+    }
 }
