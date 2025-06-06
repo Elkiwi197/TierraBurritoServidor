@@ -2,7 +2,6 @@ package com.tierraburritoservidor.ui.controllers;
 
 
 import com.tierraburritoservidor.domain.model.Pedido;
-import com.tierraburritoservidor.domain.model.Plato;
 import com.tierraburritoservidor.domain.service.ServicePedidos;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -22,18 +21,14 @@ public class PedidosRestController {
     }
 
     @GetMapping("/usuario/{correoCliente}")
-    public Pedido getPedidoActualByUsuario(@PathVariable String correoCliente) {
-        return servicePedidos.getPedidoActual(correoCliente);
+    public List<Pedido> getPedidosByCorreo(@PathVariable String correoCliente) {
+        return servicePedidos.getPedidosByCorreo(correoCliente);
     }
 
     @PostMapping("/anadirPedido")
-    public Pedido addPlatoPedidoActual(@RequestBody Pedido pedido) {
+    public String addPlatoPedidoActual(@RequestBody Pedido pedido) {
         return servicePedidos.addPedido(pedido);
     }
 
-    @PostMapping("/anadirPlato{correoCliente}")
-    public void addPlatoPedidoActual(@RequestBody Plato plato, @PathVariable String correoCliente) {
-        servicePedidos.addPlato(plato, correoCliente);
-    }
 
 }

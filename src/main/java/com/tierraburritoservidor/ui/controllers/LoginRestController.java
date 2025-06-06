@@ -23,8 +23,8 @@ public class LoginRestController {
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestParam @NotBlank String correo, @RequestParam @NotBlank String contrasena) {
         serviceUsuarios.comprobarCredenciales(correo, contrasena);
-        String accessToken = configurationTokens.crearToken(correo, 1200);
-        String refreshToken = configurationTokens.crearToken(correo, 3600000);
+        String accessToken = configurationTokens.crearToken(correo, 12000);
+        String refreshToken = configurationTokens.crearToken(correo, 2000000);
         return ResponseEntity.ok().body(
                 AuthenticationResponse.builder()
                         .accessToken(accessToken)

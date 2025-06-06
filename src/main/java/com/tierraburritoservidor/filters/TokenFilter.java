@@ -1,13 +1,18 @@
 package com.tierraburritoservidor.filters;
 
 import com.tierraburritoservidor.common.Constantes;
+import com.tierraburritoservidor.common.ConstantesErrores;
 import com.tierraburritoservidor.config.ConfigurationBeans;
 import com.tierraburritoservidor.config.auth.ConfigurationTokens;
+import com.tierraburritoservidor.errors.exceptions.TokenCaducadoException;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.el.parser.Token;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -21,9 +26,10 @@ public class TokenFilter extends OncePerRequestFilter {
     private final ConfigurationTokens configurationTokens;
     private final ConfigurationBeans configurationBeans;
 
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws IOException {
+            throws IOException, ServletException {
 
         String authHeader = request.getHeader(Constantes.AUTHORIZATION_HEADER);
         if (authHeader == null || !authHeader.startsWith(Constantes.BEARER_)) {
@@ -34,23 +40,30 @@ public class TokenFilter extends OncePerRequestFilter {
 
         String token = authHeader.substring(7);
 
-        if (!configurationTokens.validarToken(token)) {
-            log.error(Constantes.ERROR_VALIDAR_TOKEN);
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, Constantes.TOKEN_INVALIDO_O_EXPIRADO);
-            return;
-        }
-
         try {
-            String user = configurationTokens.getCorreo(token); //todo cambiar a correo
-            log.info(Constantes.USUARIO_AUTENTICADO, user);
+            if (!configurationTokens.validarToken(token)) {
+                log.error(Constantes.ERROR_VALIDAR_TOKEN);
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, Constantes.TOKEN_INVALIDO_O_EXPIRADO);
+                return;
+            }
+
+            String correo = configurationTokens.getCorreo(token);
+            log.info(Constantes.USUARIO_AUTENTICADO, correo);
 
             filterChain.doFilter(request, response);
 
+        } catch (TokenCaducadoException e) {
+            log.warn("Token expirado: {}", e.getMessage());
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+        } catch(ExpiredJwtException e){
+            log.warn("Token expirado: {}", e.getMessage());
+            throw new TokenCaducadoException();
         } catch (Exception e) {
-            log.error(Constantes.ERROR_VALIDAR_TOKEN + "{}", e.getMessage());
+            log.error("Error inesperado al validar token: {}", e.getMessage(), e);
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, Constantes.TOKEN_INVALIDO_O_EXPIRADO);
         }
     }
+
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {

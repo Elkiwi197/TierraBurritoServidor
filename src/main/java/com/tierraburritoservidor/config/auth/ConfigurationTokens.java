@@ -1,9 +1,7 @@
 package com.tierraburritoservidor.config.auth;
 
 
-import com.tierraburritoservidor.errors.exceptions.TokenCaducadoException;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
@@ -24,22 +22,16 @@ public class ConfigurationTokens {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + time ))
+                .setExpiration(new Date(System.currentTimeMillis() + time))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
     public boolean validarToken(String token) {
-        try {
-
-            Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token);
-        } catch (ExpiredJwtException e){
-            log.error(e.getMessage());
-            throw new TokenCaducadoException();
-        }
+        Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token);
         return true;
     }
 

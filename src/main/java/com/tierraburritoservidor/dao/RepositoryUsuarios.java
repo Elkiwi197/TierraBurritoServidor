@@ -17,7 +17,8 @@ public class RepositoryUsuarios {
 
     private final List<Usuario> usuariosActivados = new ArrayList<>(Arrays.asList(
             new Usuario(1, "pepe", "pepe", "pepe@correo.es", TipoUsuario.CLIENTE, true, "1234"),
-            new Usuario(2, "fulanito", "fulanito", "fulanito@correo.es", TipoUsuario.REPARTIDOR, true, "4321")
+            new Usuario(2, "fulanito", "fulanito", "fulanito@correo.es", TipoUsuario.REPARTIDOR, true, "4321"),
+            new Usuario(3, "ivan", "ivan", "elkiwi197@gmail.com", TipoUsuario.CLIENTE, true, "4321")
     ));
 
     private final List<Usuario> usuariosDesactivados = new ArrayList<>(Arrays.asList(
@@ -59,9 +60,6 @@ public class RepositoryUsuarios {
         }
     }
 
-    public void deleteUsuario(int id) {
-        usuariosActivados.removeIf(u -> u.getId() == id);
-    }
 
     public Usuario getUsuarioByCorreo(String correo) {
         Usuario usuario =  usuariosActivados.stream()
@@ -86,6 +84,7 @@ public class RepositoryUsuarios {
                 .findFirst()
                 .orElse(null);
         if (usuario != null){
+            usuario.setActivado(true);
             usuariosActivados.add(usuario);
             usuariosDesactivados.remove(usuario);
             log.info("Usuario activado");

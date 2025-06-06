@@ -2,10 +2,7 @@ package com.tierraburritoservidor.domain.service;
 
 import com.tierraburritoservidor.dao.RepositoryUsuarios;
 import com.tierraburritoservidor.domain.model.Usuario;
-import com.tierraburritoservidor.errors.exceptions.CodigoActivacionIncorrectoException;
-import com.tierraburritoservidor.errors.exceptions.CorreoYaExisteException;
-import com.tierraburritoservidor.errors.exceptions.UsuarioContrasenaIncorrectosException;
-import com.tierraburritoservidor.errors.exceptions.UsuarioYaActivadoException;
+import com.tierraburritoservidor.errors.exceptions.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +17,9 @@ public class ServiceUsuarios {
 
     public void comprobarCredenciales(String correo, String contrasena) {
         Usuario usuario = repositoryUsuarios.getUsuarioByCorreo(correo);
+        if (!usuario.isActivado()){
+            throw new UsuarioNoActivadoException();
+        }
         if (!usuario.getContrasena().equals(contrasena)) {
             throw new UsuarioContrasenaIncorrectosException();
         }

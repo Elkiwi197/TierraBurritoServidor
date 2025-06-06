@@ -13,8 +13,8 @@ import java.util.List;
 public class Plato {
     private int id;
     private String nombre;
-    private List<Ingredientes> ingredientes;
-    private List<Ingredientes> extras;
+    private List<Producto> ingredientes;
+    private List<Producto> extras;
     private double precio;
     private String rutaFoto;
 }

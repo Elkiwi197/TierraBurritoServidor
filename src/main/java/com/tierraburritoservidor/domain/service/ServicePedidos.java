@@ -4,6 +4,7 @@ import com.tierraburritoservidor.dao.RepositoryPedidos;
 import com.tierraburritoservidor.domain.model.Pedido;
 import com.tierraburritoservidor.domain.model.Plato;
 import com.tierraburritoservidor.errors.exceptions.PedidoNoEncontradoException;
+import com.tierraburritoservidor.errors.exceptions.PedidosNoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,27 +27,17 @@ public class ServicePedidos {
     }
 
 
-    public Pedido getPedidoActual(String correoCliente) {
-        Pedido pedido = repositoryPedidos.getPedidoActual(correoCliente);
-        if (pedido == null) {
-            throw new PedidoNoEncontradoException();
+    public List<Pedido> getPedidosByCorreo(String correoCliente) {
+        List<Pedido> pedidos = repositoryPedidos.getPedidosByCorreo(correoCliente);
+        if (pedidos.isEmpty()) {
+            throw new PedidosNoEncontradoException();
         }
-        return pedido;
+        return pedidos;
     }
 
-    public Pedido addPedido(Pedido pedido) {
+    public String addPedido(Pedido pedido) {
         return repositoryPedidos.addPedido(pedido);
     }
 
-    public void addPlato(Plato plato, String correoCliente) {
-        Pedido pedido;
-        pedido = repositoryPedidos.getPedidoActual(correoCliente);
-        if (pedido == null) {
-            throw new PedidoNoEncontradoException();
-        }
-        List<Plato> platos = new ArrayList<>(pedido.getPlatos());
-        platos.add(plato);
-        pedido.setPlatos(platos);
-        repositoryPedidos.updatePedido(pedido);
-    }
+
 }

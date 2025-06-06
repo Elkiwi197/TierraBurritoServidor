@@ -34,14 +34,25 @@ public class ExceptionHandlers {
     @ExceptionHandler(PedidoNoEncontradoException.class)
     public ResponseEntity<ApiError> handleException(PedidoNoEncontradoException e) {
         ApiError apiError = new ApiError(e.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
     }
 
+    @ExceptionHandler(PedidosNoEncontradoException.class)
+    public ResponseEntity<ApiError> handleException(PedidosNoEncontradoException e) {
+        ApiError apiError = new ApiError(e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
+    }
+
+    @ExceptionHandler(PlatoNoEncontradoException.class)
+    public ResponseEntity<ApiError> handleException(PlatoNoEncontradoException e) {
+        ApiError apiError = new ApiError(e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
+    }
 
     @ExceptionHandler(ProductoNoEncontradoException.class)
     public ResponseEntity<ApiError> handleException(ProductoNoEncontradoException e) {
         ApiError apiError = new ApiError(e.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
     }
 
 
@@ -62,14 +73,14 @@ public class ExceptionHandlers {
     @ExceptionHandler(UsuarioNoEncontradoException.class)
     public ResponseEntity<ApiError> handleException(UsuarioNoEncontradoException e) {
         ApiError apiError = new ApiError(e.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
     }
 
 
     @ExceptionHandler(UsuarioYaActivadoException.class)
     public ResponseEntity<ApiError> handleException(UsuarioYaActivadoException e) {
         ApiError apiError = new ApiError(e.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(apiError); //todo preguntar a Oscar que status es este
     }
 
 
@@ -78,9 +89,4 @@ public class ExceptionHandlers {
         ApiError apiError = new ApiError(e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
     }
-
-
-
-
-
 }

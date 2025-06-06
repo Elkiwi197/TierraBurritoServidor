@@ -2,13 +2,13 @@ package com.tierraburritoservidor.errors;
 
 public class ApiError {
 
-    private final String mensaje;
+    private final String message;
 
-    public ApiError(String mensaje) {
-        this.mensaje = mensaje;
+    public ApiError(String message) {
+        this.message = message;
     }
 
-    public String getMensaje() {
-        return mensaje;
+    public String getMessage() {
+        return message;
     }
 }

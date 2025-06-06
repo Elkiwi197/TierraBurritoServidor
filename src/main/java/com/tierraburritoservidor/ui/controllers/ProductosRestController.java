@@ -1,5 +1,6 @@
 package com.tierraburritoservidor.ui.controllers;
 
+import com.tierraburritoservidor.domain.model.Plato;
 import com.tierraburritoservidor.domain.model.Producto;
 import com.tierraburritoservidor.domain.service.ServiceProductos;
 import jakarta.websocket.server.PathParam;
@@ -25,9 +26,19 @@ public class ProductosRestController {
         return serviceProductos.getProductoById(id);
     }
 
-    @GetMapping("/producto")
-    public Producto getProductoByNombre(@RequestParam String nombreProducto){
+    @PostMapping("/producto/{nombreProducto}")
+    public Producto getProductoByNombre(@PathVariable String nombreProducto){
         return serviceProductos.getProductoByNombre(nombreProducto);
+    }
+
+    @PostMapping("/ingredientes/plato")
+    public List<Producto> getIngredientesByPlato(@RequestBody Plato plato){
+        return serviceProductos.getIngredientesByPlato(plato);
+    }
+
+    @PostMapping("/extras/plato")
+    public List<Producto> getExtrasByPlato(@RequestBody Plato plato){
+        return serviceProductos.getExtrasByPlato(plato);
     }
 
 }

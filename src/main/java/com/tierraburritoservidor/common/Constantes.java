@@ -1,10 +1,18 @@
 package com.tierraburritoservidor.common;
 
+import com.tierraburritoservidor.domain.model.Pedido;
+
+import java.util.List;
+
 public class Constantes {
     private Constantes() {
     }
 
 
+
+
+    public static final String PEDIDO_HECHO = "Pedido hecho" ;
+    public static final String USUARIO_CREADO = "Usuario creado, active su cuenta mediante su correo electrónico";
     public static final String VALIDANDO_TOKEN = "Validando token";
     public static final String SUBJECT = "Para el servidor";
     public static final String ISSUER = "Servidor";
