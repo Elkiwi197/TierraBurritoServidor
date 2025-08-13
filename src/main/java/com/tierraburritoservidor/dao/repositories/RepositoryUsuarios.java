@@ -11,7 +11,6 @@ import com.tierraburritoservidor.dao.model.UsuarioDB;
 import com.tierraburritoservidor.dao.util.DocumentParser;
 import com.tierraburritoservidor.dao.util.MongoUtil;
 import com.tierraburritoservidor.dao.util.UserIdManager;
-import com.tierraburritoservidor.domain.model.Usuario;
 import com.tierraburritoservidor.errors.exceptions.CorreoYaExisteException;
 import com.tierraburritoservidor.errors.exceptions.UsuarioNoEncontradoException;
 import lombok.extern.log4j.Log4j2;
@@ -22,7 +21,9 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Updates.set;
 
 @Log4j2
 @Repository
@@ -30,9 +31,9 @@ public class RepositoryUsuarios implements RepositoryUsuariosInterface {
 
     private final String COLLECTION_NAME = "Patients";
 
-    private DocumentParser documentParser;
-    private UserIdManager userIdManager;
-    private Gson gson = new GsonBuilder()
+    private final DocumentParser documentParser;
+    private final UserIdManager userIdManager;
+    private final Gson gson = new GsonBuilder()
             .create();
 
 
@@ -76,7 +77,7 @@ public class RepositoryUsuarios implements RepositoryUsuariosInterface {
 
         } catch (Exception e) {
             log.error(ConstantesErrores.ERROR_CREANDO_USUARIO, e.getMessage(), e);
-            throw new RuntimeException(ConstantesErrores.ERROR_CREANDO_USUARIO);
+            throw new  RuntimeException(ConstantesErrores.ERROR_CREANDO_USUARIO);
         } finally {
             MongoUtil.close();
         }
@@ -89,7 +90,6 @@ public class RepositoryUsuarios implements RepositoryUsuariosInterface {
             MongoDatabase database = MongoUtil.getDatabase();
             MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME);
 
-            // Buscar directamente por el campo "correo"
             Document document = collection.find(Filters.eq("correo", correo)).first();
             if (document != null) {
                 usuario = documentParser.documentToUsuarioDB(document);
@@ -108,34 +108,40 @@ public class RepositoryUsuarios implements RepositoryUsuariosInterface {
 
 
     public void activarUsuario(int id) {
-        Usuario usuario = usuariosDesactivados.stream()
-                .filter(u -> u.getId() == id)
-                .findFirst()
-                .orElse(null);
-        if (usuario != null) {
-            usuario.setActivado(true);
-            usuariosActivados.add(usuario);
-            usuariosDesactivados.remove(usuario);
-            log.info("Usuario activado");
-        } else {
-            throw new UsuarioNoEncontradoException();
+        try {
+            MongoDatabase database = MongoUtil.getDatabase();
+            MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME);
+            collection.updateOne(
+                    eq("_id", userIdManager.getObjectId(id)),
+                    set("activado", true)
+            );
+        } catch (Exception e) {
+            log.error("Error actualizando usuario: {}", e.getMessage(), e);
+        }finally {
+            MongoUtil.close();
         }
     }
 
 
     public UsuarioDB getUsuarioById(int id) {
-        Usuario usuario = usuariosActivados.stream()
-                .filter(u -> u.getId() == id)
-                .findFirst()
-                .orElse(null);
-        if (usuario == null) {
-            usuario = usuariosDesactivados.stream()
-                    .filter(u -> u.getId() == id)
-                    .findFirst()
-                    .orElse(null);
-        }
-        if (usuario == null) {
-            throw new UsuarioNoEncontradoException();
+        UsuarioDB usuario = new UsuarioDB();
+        try {
+            MongoDatabase database = MongoUtil.getDatabase();
+            MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME);
+
+            ObjectId objectId = userIdManager.getObjectId(id);
+            Document document = collection.find(Filters.eq("_id", objectId)).first();
+            if (document != null) {
+                usuario = documentParser.documentToUsuarioDB(document);
+            } else {
+                throw new UsuarioNoEncontradoException();
+            }
+
+        } catch (Exception e) {
+            log.error("Error al obtener el usuario por ID: {}", e.getMessage(), e);
+
+        } finally {
+            MongoUtil.close();
         }
         return usuario;
     }
