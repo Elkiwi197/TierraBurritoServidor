@@ -1,68 +1,111 @@
 package com.tierraburritoservidor.dao.repositories;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.tierraburritoservidor.common.ConstantesErrores;
 import com.tierraburritoservidor.dao.RepositoryUsuariosInterface;
-import com.tierraburritoservidor.domain.model.TipoUsuario;
+import com.tierraburritoservidor.dao.model.UsuarioDB;
+import com.tierraburritoservidor.dao.util.DocumentParser;
+import com.tierraburritoservidor.dao.util.MongoUtil;
+import com.tierraburritoservidor.dao.util.UserIdManager;
 import com.tierraburritoservidor.domain.model.Usuario;
+import com.tierraburritoservidor.errors.exceptions.CorreoYaExisteException;
 import com.tierraburritoservidor.errors.exceptions.UsuarioNoEncontradoException;
 import lombok.extern.log4j.Log4j2;
+import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Log4j2
 @Repository
 public class RepositoryUsuarios implements RepositoryUsuariosInterface {
 
-    private final List<Usuario> usuariosActivados = new ArrayList<>(Arrays.asList(
-            new Usuario(1, "pepe", "pepe", "pepe@correo.es", TipoUsuario.CLIENTE, true, "1234"),
-            new Usuario(2, "fulanito", "fulanito", "fulanito@correo.es", TipoUsuario.REPARTIDOR, true, "4321")
-    ));
+    private final String COLLECTION_NAME = "Patients";
 
-    private final List<Usuario> usuariosDesactivados = new ArrayList<>(Arrays.asList(
-            new Usuario(3, "camello", "camello", "camello@correo.es", TipoUsuario.CLIENTE, false, "123456789"),
-            new Usuario(4, "palazon", "palazon", "palazon@correo.es", TipoUsuario.REPARTIDOR, false, "987654321")
-    ));
+    private DocumentParser documentParser;
+    private UserIdManager userIdManager;
+    private Gson gson = new GsonBuilder()
+            .create();
 
-    public List<Usuario> getUsuariosActivados() {
-        return usuariosActivados;
+
+    public RepositoryUsuarios(DocumentParser documentParser, UserIdManager userIdManager) {
+        this.documentParser = documentParser;
+        this.userIdManager = userIdManager;
     }
 
-    public String crearUsuarioDesactivado(Usuario usuario) {
-        int id = 0;
-        boolean repetido = true;
-        while (repetido) {
-            id = (int) (Math.random() * 100 + 1);
-            int finalId = id;
-            if (usuariosActivados.stream().noneMatch(u -> u.getId() == finalId) &&
-                    usuariosDesactivados.stream().noneMatch(u -> u.getId() == finalId)) {
-                repetido = false;
+    public List<UsuarioDB> getUsuariosActivados() {
+        List<UsuarioDB> usuarios = new ArrayList<>();
+        try {
+            MongoDatabase database = MongoUtil.getDatabase();
+            MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME);
+            List<Document> documents = collection.find().into(new ArrayList<>());
+            HashMap<ObjectId, Integer> newIds = new HashMap<>();
+            documents.forEach(document -> {
+                usuarios.add(documentParser.documentToUsuarioDB(document));
+                newIds.put(document.getObjectId("_id"), newIds.size() + 1);
+            });
+            userIdManager.setUserIds(newIds);
+        } catch (Exception e) {
+            log.error("Error getting usuarios: {}", e.getMessage(), e);
+        } finally {
+            MongoUtil.close();
+        }
+        return usuarios;
+    }
+
+    public void crearUsuarioDesactivado(UsuarioDB usuario) {
+        try {
+            MongoDatabase database = MongoUtil.getDatabase();
+            MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME);
+
+            Document existingUser = collection.find(Filters.eq("correo", usuario.getCorreo())).first();
+            if (existingUser != null) {
+                throw new CorreoYaExisteException();
             }
+
+            Document usuarioDocument = Document.parse(gson.toJson(usuario));
+            collection.insertOne(usuarioDocument);
+
+        } catch (Exception e) {
+            log.error(ConstantesErrores.ERROR_CREANDO_USUARIO, e.getMessage(), e);
+            throw new RuntimeException(ConstantesErrores.ERROR_CREANDO_USUARIO);
+        } finally {
+            MongoUtil.close();
         }
-        usuario.setId(id);
-        usuariosDesactivados.add(usuario);
-        log.info("Usuario creado");
-        return usuario.getCodigoActivacion();
     }
 
 
-    public Usuario getUsuarioByCorreo(String correo) {
-        Usuario usuario = usuariosActivados.stream()
-                .filter(u -> u.getCorreo().equals(correo))
-                .findFirst()
-                .orElse(null);
-        if (usuario == null) {
-            usuario = usuariosDesactivados.stream()
-                    .filter(u -> u.getCorreo().equals(correo))
-                    .findFirst()
-                    .orElse(null);
-        }
-        if (usuario == null) {
-            throw new UsuarioNoEncontradoException();
+    public UsuarioDB getUsuarioByCorreo(String correo) {
+        UsuarioDB usuario = new UsuarioDB();
+        try {
+            MongoDatabase database = MongoUtil.getDatabase();
+            MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME);
+
+            // Buscar directamente por el campo "correo"
+            Document document = collection.find(Filters.eq("correo", correo)).first();
+            if (document != null) {
+                usuario = documentParser.documentToUsuarioDB(document);
+            } else {
+                throw new UsuarioNoEncontradoException();
+            }
+
+        } catch (Exception e) {
+            log.error("Error al obtener el usuario por correo: {}", e.getMessage(), e);
+
+        } finally {
+            MongoUtil.close();
         }
         return usuario;
     }
+
 
     public void activarUsuario(int id) {
         Usuario usuario = usuariosDesactivados.stream()
@@ -80,7 +123,7 @@ public class RepositoryUsuarios implements RepositoryUsuariosInterface {
     }
 
 
-    public Usuario getUsuarioById(int id) {
+    public UsuarioDB getUsuarioById(int id) {
         Usuario usuario = usuariosActivados.stream()
                 .filter(u -> u.getId() == id)
                 .findFirst()

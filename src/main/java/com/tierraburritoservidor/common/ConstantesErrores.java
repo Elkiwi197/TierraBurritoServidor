@@ -5,6 +5,7 @@ public class ConstantesErrores {
 
 
 
+
     public static final String TOKEN_NO_PROPORCIONADO = "Token no proporcionado o formato incorrecto";
     public static final String TOKEN_CADUCADO = "Token caducado";
     public static final String CORREO_YA_EXISTE = "Ya existe una cuenta con este correo";
@@ -19,6 +20,7 @@ public class ConstantesErrores {
     public static final String USUARIO_YA_ACTIVADO = "Usuario ya activado";
     public static final String CODIGO_ACTIVACION_INCORRECTO = "Código de activación incorrecto";
     public static final String ERROR_VALIDAR_TOKEN = "Error validando token";
+    public static final String ERROR_CREANDO_USUARIO = "Error creando usuario";
     public static final String TOKEN_INVALIDO = "Token no proporcionado o inválido";
     public static final String TOKEN_INVALIDO_O_EXPIRADO = "Token inválido o expirado";
 }

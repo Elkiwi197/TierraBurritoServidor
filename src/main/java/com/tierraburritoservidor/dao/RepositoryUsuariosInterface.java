@@ -1,13 +1,18 @@
 package com.tierraburritoservidor.dao;
 
+import com.tierraburritoservidor.dao.model.UsuarioDB;
 import com.tierraburritoservidor.domain.model.Usuario;
 
-public interface RepositoryUsuariosInterface {
-    String crearUsuarioDesactivado(Usuario usuario);
+import java.util.List;
 
-    Usuario getUsuarioByCorreo(String correo);
+public interface RepositoryUsuariosInterface {
+    void crearUsuarioDesactivado(UsuarioDB usuario);
+
+    UsuarioDB getUsuarioByCorreo(String correo);
 
     void activarUsuario(int id);
 
-    Usuario getUsuarioById(int id);
+    UsuarioDB getUsuarioById(int id);
+
+    List<UsuarioDB> getUsuariosActivados();
 }

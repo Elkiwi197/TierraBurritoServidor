@@ -11,29 +11,29 @@ public class UserIdManager {
 
 
     @Setter
-    private HashMap<ObjectId, Integer> patientIds = new HashMap<>();
+    private HashMap<ObjectId, Integer> userIds = new HashMap<>();
 
     public Integer getId(ObjectId objectId) {
-        return patientIds.get(objectId);
+        return userIds.get(objectId);
     }
 
-    public ObjectId createNewID(int newId) {
+    public ObjectId createNewId(int newId) {
         boolean repeated = true;
         ObjectId objectId = new ObjectId();
         do {
-            if (patientIds.containsKey(objectId)) {
+            if (userIds.containsKey(objectId)) {
                 objectId = new ObjectId();
             } else {
                 repeated = false;
             }
         } while (repeated);
-        patientIds.put(objectId, newId);
+        userIds.put(objectId, newId);
         return objectId;
     }
 
     public ObjectId getObjectId(int id) {
-        if (patientIds.containsValue(id)) {
-            for (HashMap.Entry<ObjectId, Integer> entry : patientIds.entrySet()) {
+        if (userIds.containsValue(id)) {
+            for (HashMap.Entry<ObjectId, Integer> entry : userIds.entrySet()) {
                 if (entry.getValue().equals(id)) {
                     return entry.getKey();
                 }
