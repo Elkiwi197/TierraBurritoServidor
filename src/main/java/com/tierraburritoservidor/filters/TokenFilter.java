@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.el.parser.Token;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -32,9 +31,9 @@ public class TokenFilter extends OncePerRequestFilter {
             throws IOException, ServletException {
 
         String authHeader = request.getHeader(Constantes.AUTHORIZATION_HEADER);
-        if (authHeader == null || !authHeader.startsWith(Constantes.BEARER_)) {
-            log.warn(Constantes.TOKEN_NO_PROPORCIONADO);
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, Constantes.TOKEN_INVALIDO);
+        if (authHeader == null || !authHeader.startsWith(Constantes.BEARER)) {
+            log.warn(ConstantesErrores.TOKEN_NO_PROPORCIONADO);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ConstantesErrores.TOKEN_INVALIDO);
             return;
         }
 
@@ -42,8 +41,8 @@ public class TokenFilter extends OncePerRequestFilter {
 
         try {
             if (!configurationTokens.validarToken(token)) {
-                log.error(Constantes.ERROR_VALIDAR_TOKEN);
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, Constantes.TOKEN_INVALIDO_O_EXPIRADO);
+                log.error(ConstantesErrores.ERROR_VALIDAR_TOKEN);
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ConstantesErrores.TOKEN_INVALIDO_O_EXPIRADO);
                 return;
             }
 
@@ -60,7 +59,7 @@ public class TokenFilter extends OncePerRequestFilter {
             throw new TokenCaducadoException();
         } catch (Exception e) {
             log.error("Error inesperado al validar token: {}", e.getMessage(), e);
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, Constantes.TOKEN_INVALIDO_O_EXPIRADO);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ConstantesErrores.TOKEN_INVALIDO_O_EXPIRADO);
         }
     }
 

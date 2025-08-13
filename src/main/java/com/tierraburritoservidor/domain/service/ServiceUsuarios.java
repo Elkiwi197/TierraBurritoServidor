@@ -1,6 +1,6 @@
 package com.tierraburritoservidor.domain.service;
 
-import com.tierraburritoservidor.dao.RepositoryUsuarios;
+import com.tierraburritoservidor.dao.repositories.RepositoryUsuarios;
 import com.tierraburritoservidor.domain.model.Usuario;
 import com.tierraburritoservidor.errors.exceptions.*;
 import lombok.RequiredArgsConstructor;

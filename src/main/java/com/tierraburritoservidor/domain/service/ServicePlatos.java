@@ -1,8 +1,7 @@
 package com.tierraburritoservidor.domain.service;
 
-import com.tierraburritoservidor.dao.RepositoryPlatos;
+import com.tierraburritoservidor.dao.repositories.RepositoryPlatos;
 import com.tierraburritoservidor.domain.model.Plato;
-import com.tierraburritoservidor.errors.exceptions.PedidoNoEncontradoException;
 import com.tierraburritoservidor.errors.exceptions.PlatoNoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

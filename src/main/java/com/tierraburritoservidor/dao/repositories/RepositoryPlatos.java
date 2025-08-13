@@ -1,5 +1,6 @@
-package com.tierraburritoservidor.dao;
+package com.tierraburritoservidor.dao.repositories;
 
+import com.tierraburritoservidor.dao.RepositoryPlatosInterface;
 import com.tierraburritoservidor.domain.model.Ingredientes;
 import com.tierraburritoservidor.domain.model.Plato;
 import com.tierraburritoservidor.domain.model.Producto;
@@ -10,7 +11,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class RepositoryPlatos {
+public class RepositoryPlatos implements RepositoryPlatosInterface {
 
 
     private final List<Plato> platos = List.of(

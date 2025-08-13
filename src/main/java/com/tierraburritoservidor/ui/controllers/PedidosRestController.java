@@ -15,10 +15,6 @@ public class PedidosRestController {
 
     private final ServicePedidos servicePedidos;
 
-    @GetMapping("/pedido/{id}")
-    public Pedido addPlatoPedidoActual(@PathVariable int id) {
-        return servicePedidos.getPedidoById(id);
-    }
 
     @GetMapping("/usuario/{correoCliente}")
     public List<Pedido> getPedidosByCorreo(@PathVariable String correoCliente) {

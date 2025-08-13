@@ -1,8 +1,8 @@
-package com.tierraburritoservidor.dao;
+package com.tierraburritoservidor.dao.repositories;
 
+import com.tierraburritoservidor.dao.RepositoryUsuariosInterface;
 import com.tierraburritoservidor.domain.model.TipoUsuario;
 import com.tierraburritoservidor.domain.model.Usuario;
-import com.tierraburritoservidor.errors.exceptions.UsuarioNoActivadoException;
 import com.tierraburritoservidor.errors.exceptions.UsuarioNoEncontradoException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Repository;
@@ -13,12 +13,11 @@ import java.util.List;
 
 @Log4j2
 @Repository
-public class RepositoryUsuarios {
+public class RepositoryUsuarios implements RepositoryUsuariosInterface {
 
     private final List<Usuario> usuariosActivados = new ArrayList<>(Arrays.asList(
             new Usuario(1, "pepe", "pepe", "pepe@correo.es", TipoUsuario.CLIENTE, true, "1234"),
-            new Usuario(2, "fulanito", "fulanito", "fulanito@correo.es", TipoUsuario.REPARTIDOR, true, "4321"),
-            new Usuario(3, "ivan", "ivan", "elkiwi197@gmail.com", TipoUsuario.CLIENTE, true, "4321")
+            new Usuario(2, "fulanito", "fulanito", "fulanito@correo.es", TipoUsuario.REPARTIDOR, true, "4321")
     ));
 
     private final List<Usuario> usuariosDesactivados = new ArrayList<>(Arrays.asList(
@@ -47,43 +46,30 @@ public class RepositoryUsuarios {
         return usuario.getCodigoActivacion();
     }
 
-    public void updateUsuario(Usuario usuario) {
-        comprobarActivacionUsuario(usuario.getId());
-        Usuario usuarioUpdate = usuariosActivados.stream()
-                .filter(u -> u.getId() == usuario.getId())
-                .findFirst()
-                .orElse(null);
-        if (usuarioUpdate != null) {
-            usuarioUpdate.setContrasena(usuario.getContrasena());
-            usuarioUpdate.setCorreo(usuarioUpdate.getCorreo());
-            usuarioUpdate.setNombre(usuarioUpdate.getNombre());
-        }
-    }
-
 
     public Usuario getUsuarioByCorreo(String correo) {
-        Usuario usuario =  usuariosActivados.stream()
+        Usuario usuario = usuariosActivados.stream()
                 .filter(u -> u.getCorreo().equals(correo))
                 .findFirst()
                 .orElse(null);
-        if (usuario == null){
-            usuario =  usuariosDesactivados.stream()
+        if (usuario == null) {
+            usuario = usuariosDesactivados.stream()
                     .filter(u -> u.getCorreo().equals(correo))
                     .findFirst()
                     .orElse(null);
         }
-        if (usuario == null){
+        if (usuario == null) {
             throw new UsuarioNoEncontradoException();
         }
         return usuario;
     }
 
-    public void activarUsuario(int id){
+    public void activarUsuario(int id) {
         Usuario usuario = usuariosDesactivados.stream()
                 .filter(u -> u.getId() == id)
                 .findFirst()
                 .orElse(null);
-        if (usuario != null){
+        if (usuario != null) {
             usuario.setActivado(true);
             usuariosActivados.add(usuario);
             usuariosDesactivados.remove(usuario);
@@ -93,28 +79,19 @@ public class RepositoryUsuarios {
         }
     }
 
-    private void comprobarActivacionUsuario(int id){
+
+    public Usuario getUsuarioById(int id) {
         Usuario usuario = usuariosActivados.stream()
                 .filter(u -> u.getId() == id)
                 .findFirst()
                 .orElse(null);
-        if (usuario == null){
-            throw  new UsuarioNoActivadoException();
+        if (usuario == null) {
+            usuario = usuariosDesactivados.stream()
+                    .filter(u -> u.getId() == id)
+                    .findFirst()
+                    .orElse(null);
         }
-    }
-
-    public Usuario getUsuarioById(int id) {
-       Usuario usuario = usuariosActivados.stream()
-                .filter(u -> u.getId() == id)
-                .findFirst()
-                .orElse(null);
-       if (usuario == null){
-           usuario = usuariosDesactivados.stream()
-                   .filter(u -> u.getId() == id)
-                   .findFirst()
-                   .orElse(null);
-       }
-        if (usuario == null){
+        if (usuario == null) {
             throw new UsuarioNoEncontradoException();
         }
         return usuario;

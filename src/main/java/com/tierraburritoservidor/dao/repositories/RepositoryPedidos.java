@@ -1,8 +1,8 @@
-package com.tierraburritoservidor.dao;
+package com.tierraburritoservidor.dao.repositories;
 
 import com.tierraburritoservidor.common.Constantes;
+import com.tierraburritoservidor.dao.RepositoryPedidosInterface;
 import com.tierraburritoservidor.domain.model.*;
-import com.tierraburritoservidor.errors.exceptions.PedidoNoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class RepositoryPedidos {
+public class RepositoryPedidos implements RepositoryPedidosInterface {
 
 
     private List<Pedido> pedidos = new ArrayList<>(Arrays.asList(
@@ -50,15 +50,6 @@ public class RepositoryPedidos {
         return Constantes.PEDIDO_HECHO;
     }
 
-
-
-
-    public Pedido getPedidoById(int id) {
-        return pedidos.stream()
-                .filter(p -> p.getId() == id)
-                .findFirst()
-                .orElse(null);
-    }
 
 
 

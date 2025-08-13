@@ -1,6 +1,8 @@
-package com.tierraburritoservidor.dao;
+package com.tierraburritoservidor.dao.repositories;
 
 
+import com.tierraburritoservidor.dao.RepositoryPlatosInterface;
+import com.tierraburritoservidor.dao.RepositoryProductosInterface;
 import com.tierraburritoservidor.domain.model.Ingredientes;
 import com.tierraburritoservidor.domain.model.Producto;
 import lombok.RequiredArgsConstructor;
@@ -10,9 +12,8 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class RepositoryProductos {
+public class RepositoryProductos implements RepositoryProductosInterface {
 
-    private final List<Producto> productos = List.of();
     private final List<Producto> ingredientes = List.of(
             new Producto(1, Ingredientes.ARROZ_BLANCO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/ArrozBlanco-1140x1050.png"),
             new Producto(2, Ingredientes.ARROZ_INTEGRAL.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/ArrozIntegral-1140x1050.png"),
@@ -40,19 +41,7 @@ public class RepositoryProductos {
         return ingredientes;
     }
 
-    public void addProducto(Producto producto) {
-        int id = 0;
-        boolean repetido = true;
-        while (repetido) {
-            id = (int) (Math.random() * 100 + 1);
-            int finalId = id;
-            if (ingredientes.stream().noneMatch(p -> p.getId() == finalId)) {
-                repetido = false;
-            }
-        }
-        producto.setId(id);
-        ingredientes.add(producto);
-    }
+
 
 
 
@@ -63,10 +52,4 @@ public class RepositoryProductos {
                 .orElse(null);
     }
 
-    public Producto getProductoById(int id) {
-        return ingredientes.stream()
-                .filter(p -> p.getId() == id)
-                .findFirst()
-                .orElse(null);
-    }
 }

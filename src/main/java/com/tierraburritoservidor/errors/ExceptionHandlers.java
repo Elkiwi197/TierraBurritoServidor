@@ -80,7 +80,7 @@ public class ExceptionHandlers {
     @ExceptionHandler(UsuarioYaActivadoException.class)
     public ResponseEntity<ApiError> handleException(UsuarioYaActivadoException e) {
         ApiError apiError = new ApiError(e.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(apiError); //todo preguntar a Oscar que status es este
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError);
     }
 
 

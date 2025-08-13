@@ -1,7 +1,7 @@
 package com.tierraburritoservidor.ui.controllers;
 
 
-import com.tierraburritoservidor.common.Constantes;
+import com.tierraburritoservidor.common.ConstantesErrores;
 import com.tierraburritoservidor.config.auth.AuthenticationResponse;
 import com.tierraburritoservidor.config.auth.ConfigurationTokens;
 import com.tierraburritoservidor.domain.service.ServiceUsuarios;
@@ -23,8 +23,8 @@ public class LoginRestController {
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestParam @NotBlank String correo, @RequestParam @NotBlank String contrasena) {
         serviceUsuarios.comprobarCredenciales(correo, contrasena);
-        String accessToken = configurationTokens.crearToken(correo, 12000);
-        String refreshToken = configurationTokens.crearToken(correo, 2000000);
+        String accessToken = configurationTokens.crearToken(correo, 1200);
+        String refreshToken = configurationTokens.crearToken(correo, 20000);
         return ResponseEntity.ok().body(
                 AuthenticationResponse.builder()
                         .accessToken(accessToken)
@@ -34,14 +34,11 @@ public class LoginRestController {
 
     @PostMapping("auth/refresh")
     public AuthenticationResponse refresh(@RequestBody String refreshToken) {
-
         if (!configurationTokens.validarToken(refreshToken)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constantes.TOKEN_INVALIDO);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, ConstantesErrores.TOKEN_INVALIDO);
         }
-
         String correoUsuario = configurationTokens.getCorreo(refreshToken);
         String newAccessToken = configurationTokens.crearToken(correoUsuario, 1200000);
-
         return AuthenticationResponse.builder()
                 .accessToken(newAccessToken)
                 .build();

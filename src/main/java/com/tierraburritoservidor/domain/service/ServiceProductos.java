@@ -1,7 +1,7 @@
 package com.tierraburritoservidor.domain.service;
 
 
-import com.tierraburritoservidor.dao.RepositoryProductos;
+import com.tierraburritoservidor.dao.repositories.RepositoryProductos;
 import com.tierraburritoservidor.domain.model.Plato;
 import com.tierraburritoservidor.domain.model.Producto;
 import com.tierraburritoservidor.errors.exceptions.ProductoNoEncontradoException;
@@ -17,18 +17,6 @@ public class ServiceProductos {
 
     private final RepositoryProductos repositoryProductos;
 
-
-    public List<Producto> getAllProductos() {
-        return repositoryProductos.getIngredientes();
-    }
-
-    public Producto getProductoById(int idProducto) {
-        Producto producto = repositoryProductos.getProductoById(idProducto);
-        if (producto == null) {
-            throw new ProductoNoEncontradoException();
-        }
-        return producto;
-    }
 
     public Producto getProductoByNombre(String nombreProducto) {
         Producto producto = repositoryProductos.getProductoByNombre(nombreProducto);
