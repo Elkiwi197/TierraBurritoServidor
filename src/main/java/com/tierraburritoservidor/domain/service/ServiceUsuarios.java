@@ -1,7 +1,9 @@
 package com.tierraburritoservidor.domain.service;
 
+import com.tierraburritoservidor.dao.model.UsuarioDB;
 import com.tierraburritoservidor.dao.repositories.RepositoryUsuarios;
 import com.tierraburritoservidor.domain.model.Usuario;
+import com.tierraburritoservidor.domain.util.DatabaseUiParser;
 import com.tierraburritoservidor.errors.exceptions.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,9 +16,10 @@ import java.util.Base64;
 public class ServiceUsuarios {
 
     private final RepositoryUsuarios repositoryUsuarios;
+    private final DatabaseUiParser databaseUiParser;
 
     public void comprobarCredenciales(String correo, String contrasena) {
-        Usuario usuario = repositoryUsuarios.getUsuarioByCorreo(correo);
+        Usuario usuario = databaseUiParser.usuarioDbToUsuario(repositoryUsuarios.getUsuarioByCorreo(correo));
         if (!usuario.isActivado()){
             throw new UsuarioNoActivadoException();
         }
@@ -35,7 +38,8 @@ public class ServiceUsuarios {
                 .noneMatch(u -> u.getCorreo().equals(usuario.getCorreo()))) {
             usuario.setActivado(false);
             usuario.setCodigoActivacion(codigo);
-            return repositoryUsuarios.crearUsuarioDesactivado(usuario);
+            repositoryUsuarios.crearUsuarioDesactivado(databaseUiParser.usuarioToUsuarioDb(usuario));
+            return codigo;
         } else {
             throw new CorreoYaExisteException();
         }
@@ -43,7 +47,7 @@ public class ServiceUsuarios {
 
 
     public void activarUsuario(int id, String codigo) {
-        Usuario usuario = repositoryUsuarios.getUsuarioById(id);
+        UsuarioDB usuario = repositoryUsuarios.getUsuarioById(id);
         if (!usuario.isActivado()) {
             if (usuario.getCodigoActivacion().equals(codigo)) {
                 repositoryUsuarios.activarUsuario(id);
@@ -57,6 +61,6 @@ public class ServiceUsuarios {
     }
 
     public Usuario getUsuarioByCorreo(String correo) {
-        return repositoryUsuarios.getUsuarioByCorreo(correo);
+        return databaseUiParser.usuarioDbToUsuario(repositoryUsuarios.getUsuarioByCorreo(correo));
     }
 }

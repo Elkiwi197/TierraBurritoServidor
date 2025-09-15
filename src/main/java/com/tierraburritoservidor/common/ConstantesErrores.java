@@ -5,6 +5,8 @@ public class ConstantesErrores {
 
 
 
+    public static final String ERROR_LEYENDO_USUARIOS = "Error leyendo usuarios";
+
 
     public static final String TOKEN_NO_PROPORCIONADO = "Token no proporcionado o formato incorrecto";
     public static final String TOKEN_CADUCADO = "Token caducado";

@@ -17,8 +17,9 @@ public class UserIdManager {
         return userIds.get(objectId);
     }
 
-    public ObjectId createNewId(int newId) {
+    public ObjectId createNewId() {
         boolean repeated = true;
+        int newId = userIds.size()+1;
         ObjectId objectId = new ObjectId();
         do {
             if (userIds.containsKey(objectId)) {
