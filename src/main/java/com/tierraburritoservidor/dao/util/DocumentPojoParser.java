@@ -13,8 +13,12 @@ public class DocumentPojoParser {
             .create();
 
     public UsuarioDB documentToUsuarioDB(Document document) {
+        //este metodo se usa al insertar un usuario nuevo y al recibirlo de la bbdd, por lo que al añadirlo
+        // se pasa un objectid que mongo cambia automaticamente pero sigue en el useridmanager.
+        // Esto significa que el objectid del useridmanager solo existe ahi, y el objectid de la bbdd
+        // nunca coincidira con el del useridmanager
         UsuarioDB usuarioDB = gson.fromJson(document.toJson(), UsuarioDB.class);
-        usuarioDB.setId(document.getObjectId("_id"));
+        usuarioDB.set_id(document.getObjectId("_id"));
         return usuarioDB;
     }
 }

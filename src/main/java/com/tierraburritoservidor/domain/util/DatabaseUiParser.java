@@ -23,7 +23,7 @@ public class DatabaseUiParser {
         usuario.setContrasena(usuarioDB.getContrasena());
         usuario.setCorreo(usuarioDB.getCorreo());
 
-        usuario.setId(userIdManager.getId(usuarioDB.getId()));
+        usuario.setId(userIdManager.getId(usuarioDB.get_id()));
         if (usuarioDB.getTipoUsuario().equals(TipoUsuario.CLIENTE)){
             usuario.setTipoUsuario(TipoUsuario.CLIENTE);
         } else if (usuarioDB.getTipoUsuario().equals(TipoUsuario.REPARTIDOR)){
@@ -42,7 +42,7 @@ public class DatabaseUiParser {
         usuarioDB.setContrasena(usuario.getContrasena());
         usuarioDB.setCorreo(usuario.getCorreo());
 
-        usuarioDB.setId(userIdManager.createNewId());
+        usuarioDB.set_id(userIdManager.createNewId());
         if (usuario.getTipoUsuario().equals(TipoUsuario.CLIENTE)){
             usuarioDB.setTipoUsuario(TipoUsuario.CLIENTE.toString());
         } else if (usuario.getTipoUsuario().equals(TipoUsuario.REPARTIDOR)){

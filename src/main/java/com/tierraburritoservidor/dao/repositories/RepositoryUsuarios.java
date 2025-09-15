@@ -71,7 +71,6 @@ public class RepositoryUsuarios implements RepositoryUsuariosInterface {
             if (existingUser != null) {
                 throw new CorreoYaExisteException();
             }
-
             Document usuarioDocument = Document.parse(gson.toJson(usuario));
             collection.insertOne(usuarioDocument);
 
