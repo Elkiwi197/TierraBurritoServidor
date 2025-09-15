@@ -42,6 +42,11 @@ public class UserIdManager {
         }
         return null;
     }
+
+    public void anadirObjectId(ObjectId objectId) {
+        userIds.put(objectId, userIds.size()+1);
+
+    }
 }
 
 

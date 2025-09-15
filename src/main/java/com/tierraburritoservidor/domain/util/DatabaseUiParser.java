@@ -42,7 +42,7 @@ public class DatabaseUiParser {
         usuarioDB.setContrasena(usuario.getContrasena());
         usuarioDB.setCorreo(usuario.getCorreo());
 
-        usuarioDB.set_id(userIdManager.createNewId());
+        //usuarioDB.set_id(userIdManager.createNewId());
         if (usuario.getTipoUsuario().equals(TipoUsuario.CLIENTE)){
             usuarioDB.setTipoUsuario(TipoUsuario.CLIENTE.toString());
         } else if (usuario.getTipoUsuario().equals(TipoUsuario.REPARTIDOR)){

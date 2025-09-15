@@ -73,7 +73,8 @@ public class RepositoryUsuarios implements RepositoryUsuariosInterface {
             }
             Document usuarioDocument = Document.parse(gson.toJson(usuario));
             collection.insertOne(usuarioDocument);
-
+            ObjectId generatedObjectId = usuarioDocument.getObjectId("_id");
+            userIdManager.anadirObjectId(generatedObjectId);
         } catch (Exception e) {
             log.error(ConstantesErrores.ERROR_CREANDO_USUARIO, e.getMessage(), e);
             throw new  RuntimeException(ConstantesErrores.ERROR_CREANDO_USUARIO);
