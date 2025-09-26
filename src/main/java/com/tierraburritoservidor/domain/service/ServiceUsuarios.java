@@ -19,6 +19,7 @@ public class ServiceUsuarios {
     private final DatabaseUiParser databaseUiParser;
 
     public void comprobarCredenciales(String correo, String contrasena) {
+        repositoryUsuarios.cargarIdsUsuarios();
         Usuario usuario = databaseUiParser.usuarioDbToUsuario(repositoryUsuarios.getUsuarioByCorreo(correo));
         if (!usuario.isActivado()){
             throw new UsuarioNoActivadoException();

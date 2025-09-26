@@ -8,33 +8,33 @@ import java.util.HashMap;
 
 @Setter
 @Component
-public class UserIdManager {
+public class ProductoIdManager {
 
 
-    private HashMap<ObjectId, Integer> userIds = new HashMap<>();
+    private HashMap<ObjectId, Integer> productoIds = new HashMap<>();
 
     public Integer getId(ObjectId objectId) {
-        return userIds.get(objectId);
+        return productoIds.get(objectId);
     }
 
     public ObjectId createNewId() {
         boolean repeated = true;
-        int newId = userIds.size()+1;
+        int newId = productoIds.size()+1;
         ObjectId objectId = new ObjectId();
         do {
-            if (userIds.containsKey(objectId)) {
+            if (productoIds.containsKey(objectId)) {
                 objectId = new ObjectId();
             } else {
                 repeated = false;
             }
         } while (repeated);
-        userIds.put(objectId, newId);
+        productoIds.put(objectId, newId);
         return objectId;
     }
 
     public ObjectId getObjectId(int id) {
-        if (userIds.containsValue(id)) {
-            for (HashMap.Entry<ObjectId, Integer> entry : userIds.entrySet()) {
+        if (productoIds.containsValue(id)) {
+            for (HashMap.Entry<ObjectId, Integer> entry : productoIds.entrySet()) {
                 if (entry.getValue().equals(id)) {
                     return entry.getKey();
                 }
@@ -44,9 +44,7 @@ public class UserIdManager {
     }
 
     public void anadirObjectId(ObjectId objectId) {
-        userIds.put(objectId, userIds.size()+1);
+        productoIds.put(objectId, productoIds.size()+1);
 
     }
 }
-
-

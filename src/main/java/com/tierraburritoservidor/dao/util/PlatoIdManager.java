@@ -8,33 +8,34 @@ import java.util.HashMap;
 
 @Setter
 @Component
-public class UserIdManager {
+public class PlatoIdManager {
 
 
-    private HashMap<ObjectId, Integer> userIds = new HashMap<>();
+    private HashMap<ObjectId, Integer> platoIds = new HashMap<>();
+
 
     public Integer getId(ObjectId objectId) {
-        return userIds.get(objectId);
+        return platoIds.get(objectId);
     }
 
     public ObjectId createNewId() {
         boolean repeated = true;
-        int newId = userIds.size()+1;
+        int newId = platoIds.size()+1;
         ObjectId objectId = new ObjectId();
         do {
-            if (userIds.containsKey(objectId)) {
+            if (platoIds.containsKey(objectId)) {
                 objectId = new ObjectId();
             } else {
                 repeated = false;
             }
         } while (repeated);
-        userIds.put(objectId, newId);
+        platoIds.put(objectId, newId);
         return objectId;
     }
 
     public ObjectId getObjectId(int id) {
-        if (userIds.containsValue(id)) {
-            for (HashMap.Entry<ObjectId, Integer> entry : userIds.entrySet()) {
+        if (platoIds.containsValue(id)) {
+            for (HashMap.Entry<ObjectId, Integer> entry : platoIds.entrySet()) {
                 if (entry.getValue().equals(id)) {
                     return entry.getKey();
                 }
@@ -44,9 +45,8 @@ public class UserIdManager {
     }
 
     public void anadirObjectId(ObjectId objectId) {
-        userIds.put(objectId, userIds.size()+1);
+        platoIds.put(objectId, platoIds.size()+1);
 
     }
 }
-
 

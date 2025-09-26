@@ -1,14 +1,17 @@
 package com.tierraburritoservidor.domain.service;
 
 
+import com.tierraburritoservidor.dao.model.ProductoDB;
 import com.tierraburritoservidor.dao.repositories.RepositoryProductos;
 import com.tierraburritoservidor.domain.model.Plato;
 import com.tierraburritoservidor.domain.model.Producto;
+import com.tierraburritoservidor.domain.util.DatabaseUiParser;
 import com.tierraburritoservidor.errors.exceptions.ProductoNoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -16,14 +19,16 @@ import java.util.List;
 public class ServiceProductos {
 
     private final RepositoryProductos repositoryProductos;
+    private final DatabaseUiParser databaseUiParser;
 
 
     public Producto getProductoByNombre(String nombreProducto) {
-        Producto producto = repositoryProductos.getProductoByNombre(nombreProducto);
-        if (producto == null) {
+        ProductoDB productoDB = repositoryProductos.getProductoByNombre(nombreProducto);
+        if (productoDB == null) {
             throw new ProductoNoEncontradoException();
         }
-        return producto;
+        return new Producto();
+        //todo parsear
     }
 
     public List<Producto> getIngredientesByPlato(Plato plato) {
@@ -33,12 +38,13 @@ public class ServiceProductos {
     }
 
     public List<Producto> getExtrasByPlato(Plato plato) {
-        List<Producto> extras = new ArrayList<>();
+        List<ProductoDB> extras = new ArrayList<>();
         repositoryProductos.getIngredientes().forEach(i -> {
             if (!plato.getIngredientes().contains(i)) {
                 extras.add(i);
             }
         });
-        return extras;
+        //todo parsear
+        return Collections.emptyList();
     }
 }

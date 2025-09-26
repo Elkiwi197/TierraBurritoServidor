@@ -1,7 +1,6 @@
 package com.tierraburritoservidor.dao;
 
 import com.tierraburritoservidor.dao.model.UsuarioDB;
-import com.tierraburritoservidor.domain.model.Usuario;
 
 import java.util.List;
 
@@ -15,4 +14,6 @@ public interface RepositoryUsuariosInterface {
     UsuarioDB getUsuarioById(int id);
 
     List<UsuarioDB> getUsuariosActivados();
+
+    void cargarIdsUsuarios();
 }

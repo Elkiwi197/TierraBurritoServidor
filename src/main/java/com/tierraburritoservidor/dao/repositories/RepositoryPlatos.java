@@ -1,72 +1,103 @@
 package com.tierraburritoservidor.dao.repositories;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.tierraburritoservidor.common.ConstantesErrores;
 import com.tierraburritoservidor.dao.RepositoryPlatosInterface;
-import com.tierraburritoservidor.domain.model.Ingredientes;
-import com.tierraburritoservidor.domain.model.Plato;
-import com.tierraburritoservidor.domain.model.Producto;
-import lombok.RequiredArgsConstructor;
+import com.tierraburritoservidor.dao.model.PlatoDB;
+import com.tierraburritoservidor.dao.util.DocumentPojoParser;
+import com.tierraburritoservidor.dao.util.MongoUtil;
+import com.tierraburritoservidor.dao.util.PlatoIdManager;
+import com.tierraburritoservidor.dao.util.ProductoIdManager;
+import com.tierraburritoservidor.errors.exceptions.PlatoNoEncontradoException;
+import lombok.extern.log4j.Log4j2;
+import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+@Log4j2
 @Repository
-@RequiredArgsConstructor
 public class RepositoryPlatos implements RepositoryPlatosInterface {
 
+    private final String COLLECTION_NAME = "Platos";
 
-    private final List<Plato> platos = List.of(
-            new Plato(1, "Nachos", List.of(
-                    new Producto(6, Ingredientes.FRIJOLES.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Frijoles-1-1140x1050.jpg"),
-                    new Producto(11, Ingredientes.PICO_DE_GALLO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Picodegallo-1140x1050.jpg"),
-                    new Producto(19, Ingredientes.SALSA_DE_QUESO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/SalsaQueso-1140x1050.jpg"),
-                    new Producto(7, Ingredientes.GUACAMOLE.name(), 2.50, "https://www.tierraburritos.com/wp-content/uploads/Guacamole-1140x1050.png"),
-                    new Producto(5, Ingredientes.CREMA_AGRIA.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/SalsaAgria-1140x1050.jpg")
-            ), List.of(), 5.99, "https://www.tierraburritos.com/wp-content/uploads/02_Nachos-1.jpg"),
-            new Plato(2, "Burrito", List.of(
-                    new Producto(1, Ingredientes.ARROZ_BLANCO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/ArrozBlanco-1140x1050.png"),
-                    new Producto(6, Ingredientes.FRIJOLES.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Frijoles-1-1140x1050.jpg"),
-                    new Producto(11, Ingredientes.PICO_DE_GALLO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Picodegallo-1140x1050.jpg"),
-                    new Producto(4, Ingredientes.CARNITAS.name(), 3.60, "https://www.tierraburritos.com/wp-content/uploads/Carnitas-1-1140x1050.jpg"),
-                    new Producto(7, Ingredientes.GUACAMOLE.name(), 2.50, "https://www.tierraburritos.com/wp-content/uploads/Guacamole-1140x1050.png")
-            ), List.of(), 12.99, "https://www.tierraburritos.com/wp-content/uploads/14_Burrito.jpg"),
-            new Plato(3, "Tacos", List.of(
-                    new Producto(4, Ingredientes.CARNITAS.name(), 3.60, "https://www.tierraburritos.com/wp-content/uploads/Carnitas-1-1140x1050.jpg"),
-                    new Producto(20, Ingredientes.VERDURAS.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Verduras-1140x1050.png"),
-                    new Producto(13, Ingredientes.QUESO_RALLADO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Queso-1140x1050.jpg"),
-                    new Producto(11, Ingredientes.PICO_DE_GALLO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Picodegallo-1140x1050.jpg"),
-                    new Producto(7, Ingredientes.GUACAMOLE.name(), 2.50, "https://www.tierraburritos.com/wp-content/uploads/Guacamole-1140x1050.png"),
-                    new Producto(19, Ingredientes.SALSA_DE_QUESO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/SalsaQueso-1140x1050.jpg")
-            ), List.of(), 8.99, "https://www.tierraburritos.com/wp-content/uploads/10_Tacos-1.jpg"),
-            new Plato(4, "Desnudo", List.of(
-                    new Producto(4, Ingredientes.CARNITAS.name(), 3.60, "https://www.tierraburritos.com/wp-content/uploads/Carnitas-1-1140x1050.jpg"),
-                    new Producto(1, Ingredientes.ARROZ_BLANCO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/ArrozBlanco-1140x1050.png"),
-                    new Producto(10, Ingredientes.MAIZ.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Maiz-1-1140x1050.jpg"),
-                    new Producto(11, Ingredientes.PICO_DE_GALLO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Picodegallo-1140x1050.jpg"),
-                    new Producto(20, Ingredientes.VERDURAS.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Verduras-1140x1050.png"),
-                    new Producto(7, Ingredientes.GUACAMOLE.name(), 2.50, "https://www.tierraburritos.com/wp-content/uploads/Guacamole-1140x1050.png")
-            ), List.of(), 10.99, "https://www.tierraburritos.com/wp-content/uploads/Desnudo_1-2.jpg"),
-            new Plato(5, "Ensalada", List.of(
-                    new Producto(9, Ingredientes.LECHUGA.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Ensalada-1140x1050.jpg"),
-                    new Producto(10, Ingredientes.MAIZ.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Maiz-1-1140x1050.jpg"),
-                    new Producto(1, Ingredientes.ARROZ_BLANCO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/ArrozBlanco-1140x1050.png"),
-                    new Producto(11, Ingredientes.PICO_DE_GALLO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Picodegallo-1140x1050.jpg"),
-                    new Producto(13, Ingredientes.QUESO_RALLADO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Queso-1140x1050.jpg"),
-                    new Producto(6, Ingredientes.FRIJOLES.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Frijoles-1-1140x1050.jpg"),
-                    new Producto(7, Ingredientes.GUACAMOLE.name(), 2.50, "https://www.tierraburritos.com/wp-content/uploads/Guacamole-1140x1050.png")
-            ), List.of(), 9.99, "https://www.tierraburritos.com/wp-content/uploads/Ensalada_1-2.jpg")
-    );
+    private final DocumentPojoParser documentPojoParser;
+    private final PlatoIdManager platoIdManager;
+    private final ProductoIdManager productoIdManager;
+    private final Gson gson = new GsonBuilder()
+            .create();
 
-    public List<Plato> getAllPlatos() {
+
+    public RepositoryPlatos(DocumentPojoParser documentPojoParser, PlatoIdManager platoIdManager, ProductoIdManager productoIdManager) {
+        this.documentPojoParser = documentPojoParser;
+        this.platoIdManager = platoIdManager;
+        this.productoIdManager = productoIdManager;
+    }
+
+
+    public List<PlatoDB> getAllPlatos() {
+        List<PlatoDB> platos = new ArrayList<>();
+        try {
+            MongoDatabase database = MongoUtil.getDatabase();
+            MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME);
+            List<Document> documents = collection.find().into(new ArrayList<>());
+            HashMap<ObjectId, Integer> newPlatoIds = new HashMap<>();
+            HashMap<ObjectId, Integer> newProductoIds = new HashMap<>();
+            List<ObjectId> objectIdsIngredientes = new ArrayList<>();
+            documents.forEach(document -> {
+                PlatoDB plato = documentPojoParser.documentToPlatoDB(document);
+                newPlatoIds.put(document.getObjectId("_id"), newPlatoIds.size() + 1);
+                List<ObjectId> idsIngredientesReales = document.getList("ingredientes", ObjectId.class);
+                idsIngredientesReales.forEach(objectId -> {
+                    if (!newProductoIds.containsKey(objectId)){
+                        newProductoIds.put(objectId, newProductoIds.size() + 1);
+                    }
+                });
+                plato.setIngredientes(idsIngredientesReales);
+                platos.add(plato);
+            });
+
+            platoIdManager.setPlatoIds(newPlatoIds);
+            productoIdManager.setProductoIds(newProductoIds);
+
+            //platoDB.set_id(document.getObjectId("_id"));
+
+        } catch (Exception e) {
+            log.error(ConstantesErrores.ERROR_LEYENDO_PLATOS, e.getMessage(), e);
+        } finally {
+            MongoUtil.close();
+        }
         return platos;
     }
 
 
+    public PlatoDB getPlatoById(int id) {
+        PlatoDB plato = new PlatoDB();
+        try {
+            MongoDatabase database = MongoUtil.getDatabase();
+            MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME);
 
-    public Plato getPlatoById(int id) {
-        return platos.stream()
-                .filter(p -> p.getId() == id)
-                .findFirst()
-                .orElse(null);
+            Document document = collection.find(Filters.eq("_id", id)).first();
+            if (document != null) {
+                plato = documentPojoParser.documentToPlatoDB(document);
+            } else {
+                throw new PlatoNoEncontradoException();
+            }
+
+        } catch (Exception e) {
+            log.error("Error al obtener el plato por id: {}", e.getMessage(), e);
+
+        } finally {
+            MongoUtil.close();
+        }
+        return plato;
     }
 }
 

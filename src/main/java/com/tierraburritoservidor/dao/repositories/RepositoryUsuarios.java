@@ -62,6 +62,24 @@ public class RepositoryUsuarios implements RepositoryUsuariosInterface {
         return usuarios;
     }
 
+    @Override
+    public void cargarIdsUsuarios() {
+        try {
+            MongoDatabase database = MongoUtil.getDatabase();
+            MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME);
+            List<Document> documents = collection.find().into(new ArrayList<>());
+            HashMap<ObjectId, Integer> newIds = new HashMap<>();
+            documents.forEach(document -> {
+                newIds.put(document.getObjectId("_id"), newIds.size() + 1);
+            });
+            userIdManager.setUserIds(newIds);
+        } catch (Exception e) {
+            log.error( ConstantesErrores.ERROR_LEYENDO_USUARIOS, e.getMessage(), e);
+        } finally {
+            MongoUtil.close();
+        }
+    }
+
     public void crearUsuarioDesactivado(UsuarioDB usuario) {
         try {
             MongoDatabase database = MongoUtil.getDatabase();

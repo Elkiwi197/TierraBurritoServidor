@@ -1,11 +1,14 @@
 package com.tierraburritoservidor.dao;
 
-import com.tierraburritoservidor.domain.model.Producto;
+import com.tierraburritoservidor.dao.model.ProductoDB;
+import org.bson.types.ObjectId;
 
 import java.util.List;
 
 public interface RepositoryProductosInterface {
-    List<Producto> getIngredientes();
+    List<ProductoDB> getIngredientes();
 
-    Producto getProductoByNombre(String nombre);
+    ProductoDB getProductoByNombre(String nombre);
+
+    ProductoDB getProductoByObjectId(ObjectId objectId);
 }
