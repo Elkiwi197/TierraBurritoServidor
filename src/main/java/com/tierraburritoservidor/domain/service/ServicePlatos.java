@@ -4,6 +4,7 @@ package com.tierraburritoservidor.domain.service;
 import com.tierraburritoservidor.dao.model.PlatoDB;
 import com.tierraburritoservidor.dao.repositories.RepositoryPlatos;
 import com.tierraburritoservidor.dao.repositories.RepositoryProductos;
+import com.tierraburritoservidor.dao.util.PlatoIdManager;
 import com.tierraburritoservidor.domain.model.Plato;
 import com.tierraburritoservidor.domain.model.Producto;
 import com.tierraburritoservidor.domain.util.DatabaseUiParser;
@@ -20,6 +21,7 @@ public class ServicePlatos {
 
     private final RepositoryPlatos repositoryPlatos;
     private final RepositoryProductos repositoryProductos;
+    private final PlatoIdManager platoIdManager;
     private final DatabaseUiParser databaseUiParser;
 
 
@@ -40,7 +42,7 @@ public class ServicePlatos {
     }
 
     public Plato getPlatoById(int id) {
-        PlatoDB platoDB = repositoryPlatos.getPlatoById(id);
+        PlatoDB platoDB = repositoryPlatos.getPlatoById(platoIdManager.getObjectId(id));
         if (platoDB == null) {
             throw new PlatoNoEncontradoException();
         }

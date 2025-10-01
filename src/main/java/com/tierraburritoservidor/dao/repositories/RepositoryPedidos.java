@@ -1,9 +1,21 @@
 package com.tierraburritoservidor.dao.repositories;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import com.tierraburritoservidor.common.Constantes;
+import com.tierraburritoservidor.common.ConstantesErrores;
 import com.tierraburritoservidor.dao.RepositoryPedidosInterface;
+import com.tierraburritoservidor.dao.model.PedidoDB;
+import com.tierraburritoservidor.dao.util.*;
 import com.tierraburritoservidor.domain.model.*;
+import com.tierraburritoservidor.errors.exceptions.CorreoYaExisteException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -12,8 +24,15 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
+@Log4j2
 public class RepositoryPedidos implements RepositoryPedidosInterface {
 
+    private final String COLLECTION_NAME = "Pedidos";
+
+    private final DocumentPojoParser documentPojoParser;
+    private final PedidoIdManager pedidoIdManager;
+    private final Gson gson = new GsonBuilder()
+            .create();
 
     private List<Pedido> pedidos = new ArrayList<>(Arrays.asList(
             new Pedido(1, "Calle falsa 123", "pepe@correo.es", List.of(
@@ -34,29 +53,45 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
 
 
 
-    public String addPedido(Pedido pedido) {
-        int id = 0;
-        boolean repetido = true;
-        while (repetido) {
-            id = (int) (Math.random() * 100 + 1);
-            int finalId = id;
-            if (pedidos.stream().noneMatch(p -> p.getId() == finalId)) {
-                repetido = false;
-            }
+    public String addPedido(PedidoDB pedido) {
+//        int id = 0;
+//        boolean repetido = true;
+//        while (repetido) {
+//            id = (int) (Math.random() * 100 + 1);
+//            int finalId = id;
+//            if (pedidos.stream().noneMatch(p -> p.getId() == finalId)) {
+//                repetido = false;
+//            }
+//        }
+//        pedido.setEstado(EstadoPedido.EN_PREPARACION);
+//        pedido.setId(id);
+//        pedidos.add(pedido);
+//        return Constantes.PEDIDO_HECHO;
+
+        try {
+            MongoDatabase database = MongoUtil.getDatabase();
+            MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME);
+
+            Document pedidoDocument = Document.parse(gson.toJson(pedido));
+            collection.insertOne(pedidoDocument);
+            ObjectId generatedObjectId = pedidoDocument.getObjectId("_id");
+            pedidoIdManager.anadirObjectId(generatedObjectId);
+        } catch (Exception e) {
+            log.error(ConstantesErrores.ERROR_CREANDO_USUARIO, e.getMessage(), e);
+            throw new  RuntimeException(ConstantesErrores.ERROR_CREANDO_USUARIO);
+        } finally {
+            MongoUtil.close();
         }
-        pedido.setEstado(EstadoPedido.EN_PREPARACION);
-        pedido.setId(id);
-        pedidos.add(pedido);
         return Constantes.PEDIDO_HECHO;
     }
 
 
 
 
-    public List<Pedido> getPedidosByCorreo(String correoCliente) {
-        return pedidos.stream()
-                .filter(p -> p.getCorreoCliente().equals(correoCliente))
-                .toList();
+    public List<PedidoDB> getPedidosByCorreo(String correoCliente) {
+        return null;
     }
+
+
 }
 

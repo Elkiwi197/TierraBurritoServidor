@@ -13,6 +13,7 @@ import com.tierraburritoservidor.dao.util.MongoUtil;
 import com.tierraburritoservidor.dao.util.UserIdManager;
 import com.tierraburritoservidor.errors.exceptions.CorreoYaExisteException;
 import com.tierraburritoservidor.errors.exceptions.UsuarioNoEncontradoException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -27,6 +28,7 @@ import static com.mongodb.client.model.Updates.set;
 
 @Log4j2
 @Repository
+@RequiredArgsConstructor
 public class RepositoryUsuarios implements RepositoryUsuariosInterface {
 
     private final String COLLECTION_NAME = "Usuarios";
@@ -37,10 +39,6 @@ public class RepositoryUsuarios implements RepositoryUsuariosInterface {
             .create();
 
 
-    public RepositoryUsuarios(DocumentPojoParser documentPojoParser, UserIdManager userIdManager) {
-        this.documentPojoParser = documentPojoParser;
-        this.userIdManager = userIdManager;
-    }
 
     public List<UsuarioDB> getUsuariosActivados() {
         List<UsuarioDB> usuarios = new ArrayList<>();

@@ -27,7 +27,7 @@ public class ServiceProductos {
         if (productoDB == null) {
             throw new ProductoNoEncontradoException();
         }
-        return new Producto();
+        return databaseUiParser.productoDBtoProducto(productoDB);
         //todo parsear
     }
 
@@ -38,13 +38,12 @@ public class ServiceProductos {
     }
 
     public List<Producto> getExtrasByPlato(Plato plato) {
-        List<ProductoDB> extras = new ArrayList<>();
+        List<Producto> extras = new ArrayList<>();
         repositoryProductos.getIngredientes().forEach(i -> {
-            if (!plato.getIngredientes().contains(i)) {
-                extras.add(i);
+            if (!plato.getIngredientes().contains(databaseUiParser.productoDBtoProducto(i))) {
+                extras.add(getProductoByNombre(i.getNombre()));
             }
         });
-        //todo parsear
-        return Collections.emptyList();
+        return extras;
     }
 }

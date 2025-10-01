@@ -13,6 +13,7 @@ import com.tierraburritoservidor.dao.util.MongoUtil;
 import com.tierraburritoservidor.dao.util.PlatoIdManager;
 import com.tierraburritoservidor.dao.util.ProductoIdManager;
 import com.tierraburritoservidor.errors.exceptions.PlatoNoEncontradoException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -24,6 +25,7 @@ import java.util.List;
 
 @Log4j2
 @Repository
+@RequiredArgsConstructor
 public class RepositoryPlatos implements RepositoryPlatosInterface {
 
     private final String COLLECTION_NAME = "Platos";
@@ -35,11 +37,7 @@ public class RepositoryPlatos implements RepositoryPlatosInterface {
             .create();
 
 
-    public RepositoryPlatos(DocumentPojoParser documentPojoParser, PlatoIdManager platoIdManager, ProductoIdManager productoIdManager) {
-        this.documentPojoParser = documentPojoParser;
-        this.platoIdManager = platoIdManager;
-        this.productoIdManager = productoIdManager;
-    }
+
 
 
     public List<PlatoDB> getAllPlatos() {
@@ -78,7 +76,7 @@ public class RepositoryPlatos implements RepositoryPlatosInterface {
     }
 
 
-    public PlatoDB getPlatoById(int id) {
+    public PlatoDB getPlatoById(ObjectId id) {
         PlatoDB plato = new PlatoDB();
         try {
             MongoDatabase database = MongoUtil.getDatabase();
@@ -87,10 +85,14 @@ public class RepositoryPlatos implements RepositoryPlatosInterface {
             Document document = collection.find(Filters.eq("_id", id)).first();
             if (document != null) {
                 plato = documentPojoParser.documentToPlatoDB(document);
+                plato.getIngredientes().forEach(i -> {
+                    if (productoIdManager.getId(i) == null){
+                        productoIdManager.anadirObjectId(i);
+                    }
+                });
             } else {
                 throw new PlatoNoEncontradoException();
             }
-
         } catch (Exception e) {
             log.error("Error al obtener el plato por id: {}", e.getMessage(), e);
 

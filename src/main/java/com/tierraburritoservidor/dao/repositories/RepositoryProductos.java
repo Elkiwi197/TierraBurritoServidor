@@ -13,6 +13,7 @@ import com.tierraburritoservidor.dao.util.DocumentPojoParser;
 import com.tierraburritoservidor.dao.util.MongoUtil;
 import com.tierraburritoservidor.dao.util.ProductoIdManager;
 import com.tierraburritoservidor.errors.exceptions.ProductoNoEncontradoException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -24,6 +25,7 @@ import java.util.List;
 
 @Log4j2
 @Repository
+@RequiredArgsConstructor
 public class RepositoryProductos implements RepositoryProductosInterface {
 
 
@@ -35,10 +37,6 @@ public class RepositoryProductos implements RepositoryProductosInterface {
             .create();
 
 
-    public RepositoryProductos(DocumentPojoParser documentPojoParser, ProductoIdManager productoIdManager) {
-        this.documentPojoParser = documentPojoParser;
-        this.productoIdManager = productoIdManager;
-    }
 
 
     public List<ProductoDB> getIngredientes() {
