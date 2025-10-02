@@ -73,7 +73,8 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
         try {
             MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
 
-            Document pedidoDocument = Document.parse(gson.toJson(pedido));
+            pedido.setEstado(EstadoPedido.EN_PREPARACION.name());
+            Document pedidoDocument = (Document) mongoTemplate.getConverter().convertToMongoType(pedido); //todo mapear asi los objetos
             collection.insertOne(pedidoDocument);
             ObjectId generatedObjectId = pedidoDocument.getObjectId("_id");
             pedidoIdManager.anadirObjectId(generatedObjectId);

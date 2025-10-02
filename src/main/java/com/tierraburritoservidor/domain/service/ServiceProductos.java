@@ -40,7 +40,8 @@ public class ServiceProductos {
     public List<Producto> getExtrasByPlato(Plato plato) {
         List<Producto> extras = new ArrayList<>();
         repositoryProductos.getIngredientes().forEach(i -> {
-            if (!plato.getIngredientes().contains(databaseUiParser.productoDBtoProducto(i))) {
+            Producto ingrediente = databaseUiParser.productoDBtoProducto(i);
+            if (!plato.getIngredientes().contains(ingrediente)) {
                 extras.add(getProductoByNombre(i.getNombre()));
             }
         });
