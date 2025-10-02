@@ -3,13 +3,11 @@ package com.tierraburritoservidor.dao.repositories;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.tierraburritoservidor.common.ConstantesErrores;
 import com.tierraburritoservidor.dao.RepositoryPlatosInterface;
 import com.tierraburritoservidor.dao.model.PlatoDB;
 import com.tierraburritoservidor.dao.util.DocumentPojoParser;
-import com.tierraburritoservidor.dao.util.MongoUtil;
 import com.tierraburritoservidor.dao.util.PlatoIdManager;
 import com.tierraburritoservidor.dao.util.ProductoIdManager;
 import com.tierraburritoservidor.errors.exceptions.PlatoNoEncontradoException;
@@ -17,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -33,18 +32,15 @@ public class RepositoryPlatos implements RepositoryPlatosInterface {
     private final DocumentPojoParser documentPojoParser;
     private final PlatoIdManager platoIdManager;
     private final ProductoIdManager productoIdManager;
+    private final MongoTemplate mongoTemplate;
     private final Gson gson = new GsonBuilder()
             .create();
-
-
-
 
 
     public List<PlatoDB> getAllPlatos() {
         List<PlatoDB> platos = new ArrayList<>();
         try {
-            MongoDatabase database = MongoUtil.getDatabase();
-            MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME);
+            MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
             List<Document> documents = collection.find().into(new ArrayList<>());
             HashMap<ObjectId, Integer> newPlatoIds = new HashMap<>();
             HashMap<ObjectId, Integer> newProductoIds = new HashMap<>();
@@ -54,7 +50,7 @@ public class RepositoryPlatos implements RepositoryPlatosInterface {
                 newPlatoIds.put(document.getObjectId("_id"), newPlatoIds.size() + 1);
                 List<ObjectId> idsIngredientesReales = document.getList("ingredientes", ObjectId.class);
                 idsIngredientesReales.forEach(objectId -> {
-                    if (!newProductoIds.containsKey(objectId)){
+                    if (!newProductoIds.containsKey(objectId)) {
                         newProductoIds.put(objectId, newProductoIds.size() + 1);
                     }
                 });
@@ -69,8 +65,6 @@ public class RepositoryPlatos implements RepositoryPlatosInterface {
 
         } catch (Exception e) {
             log.error(ConstantesErrores.ERROR_LEYENDO_PLATOS, e.getMessage(), e);
-        } finally {
-            MongoUtil.close();
         }
         return platos;
     }
@@ -79,14 +73,13 @@ public class RepositoryPlatos implements RepositoryPlatosInterface {
     public PlatoDB getPlatoById(ObjectId id) {
         PlatoDB plato = new PlatoDB();
         try {
-            MongoDatabase database = MongoUtil.getDatabase();
-            MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME);
+            MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
 
             Document document = collection.find(Filters.eq("_id", id)).first();
             if (document != null) {
                 plato = documentPojoParser.documentToPlatoDB(document);
                 plato.getIngredientes().forEach(i -> {
-                    if (productoIdManager.getId(i) == null){
+                    if (productoIdManager.getId(i) == null) {
                         productoIdManager.anadirObjectId(i);
                     }
                 });
@@ -96,8 +89,6 @@ public class RepositoryPlatos implements RepositoryPlatosInterface {
         } catch (Exception e) {
             log.error("Error al obtener el plato por id: {}", e.getMessage(), e);
 
-        } finally {
-            MongoUtil.close();
         }
         return plato;
     }

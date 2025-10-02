@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
 
     private final DocumentPojoParser documentPojoParser;
     private final PedidoIdManager pedidoIdManager;
+    private final MongoTemplate mongoTemplate;
     private final Gson gson = new GsonBuilder()
             .create();
 
@@ -69,18 +71,15 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
 //        return Constantes.PEDIDO_HECHO;
 
         try {
-            MongoDatabase database = MongoUtil.getDatabase();
-            MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME);
+            MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
 
             Document pedidoDocument = Document.parse(gson.toJson(pedido));
             collection.insertOne(pedidoDocument);
             ObjectId generatedObjectId = pedidoDocument.getObjectId("_id");
             pedidoIdManager.anadirObjectId(generatedObjectId);
         } catch (Exception e) {
-            log.error(ConstantesErrores.ERROR_CREANDO_USUARIO, e.getMessage(), e);
-            throw new  RuntimeException(ConstantesErrores.ERROR_CREANDO_USUARIO);
-        } finally {
-            MongoUtil.close();
+            log.error(ConstantesErrores.ERROR_CREANDO_PEDIDO, e.getMessage(), e);
+            throw new  RuntimeException(ConstantesErrores.ERROR_CREANDO_PEDIDO);
         }
         return Constantes.PEDIDO_HECHO;
     }

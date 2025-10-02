@@ -7,6 +7,7 @@ public class ConstantesErrores {
 
 
 
+    public static final String ERROR_CREANDO_PEDIDO = "Error creando pedido";
     public static final String ERROR_LEYENDO_USUARIOS = "Error leyendo usuarios";
     public static final String ERROR_LEYENDO_PLATOS = "Error leyendo platos";
     public static final String ERROR_LEYENDO_PRODUCTOS = "Error leyendo productos";
