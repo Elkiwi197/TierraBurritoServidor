@@ -39,6 +39,7 @@ public class DatabaseUiParser {
         usuario.setCorreo(usuarioDB.getCorreo());
 
         usuario.setId(userIdManager.getId(usuarioDB.get_id()));
+
         if (usuarioDB.getTipoUsuario().equals(TipoUsuario.CLIENTE)) {
             usuario.setTipoUsuario(TipoUsuario.CLIENTE);
         } else if (usuarioDB.getTipoUsuario().equals(TipoUsuario.REPARTIDOR)) {
@@ -61,7 +62,7 @@ public class DatabaseUiParser {
         if (usuario.getTipoUsuario().equals(TipoUsuario.CLIENTE)) {
             usuarioDB.setTipoUsuario(TipoUsuario.CLIENTE.toString());
         } else if (usuario.getTipoUsuario().equals(TipoUsuario.REPARTIDOR)) {
-              usuarioDB.setTipoUsuario(TipoUsuario.REPARTIDOR.toString());
+            usuarioDB.setTipoUsuario(TipoUsuario.REPARTIDOR.toString());
         }
 
         return usuarioDB;
@@ -76,7 +77,11 @@ public class DatabaseUiParser {
         plato.setIngredientes(List.of());
         plato.setExtras(List.of());
 
-        plato.setId(platoIdManager.getId(platoDB.get_id()));
+        if (platoIdManager.getId(platoDB.get_id()) != null) {
+            plato.setId(platoIdManager.getId(platoDB.get_id()));
+        } else {
+            plato.setId(pedidoIdManager.getPlatoId(platoDB.get_id()));
+        }
         return plato;
         //si falla el de userdb to user este falla tambien
     }
@@ -86,6 +91,10 @@ public class DatabaseUiParser {
         producto.setNombre(productoDB.getNombre());
         producto.setPrecio(productoDB.getPrecio());
         producto.setRutaFoto(productoDB.getRutafoto());
+
+        if (productoIdManager.getId(productoDB.get_id()) == null) {
+            productoIdManager.anadirObjectId(productoDB.get_id());
+        }
 
         producto.setId(productoIdManager.getId(productoDB.get_id()));
         return producto;
@@ -97,12 +106,15 @@ public class DatabaseUiParser {
         pedidoDB.setCorreoCliente(pedido.getCorreoCliente());
         pedidoDB.setDireccion(pedido.getDireccion());
         pedidoDB.setEstado(pedido.getEstado().toString());
-        pedidoDB.setPrecio(pedido.getPrecio());
+        pedidoDB.setPrecio(Double.parseDouble(String.format("%.2f", pedido.getPrecio())));
 
         List<PlatoDB> platosDB = new ArrayList<>();
         pedido.getPlatos().forEach(plato -> {
             PlatoDB platoDB = platoPedidoToPlatoDBPedido(plato);
             platosDB.add(platoDB);
+            if (pedidoIdManager.getPlatoId(platoDB.get_id()) == null) {
+                pedidoIdManager.anadirPlatoObjectId(platoDB.get_id());
+            }
         });
         pedidoDB.setPlatos(platosDB);
 
@@ -113,9 +125,41 @@ public class DatabaseUiParser {
         });
         pedidoDB.setOtros(productosDB);
 
-        pedidoDB.set_id(pedidoIdManager.createNewId());
+        pedidoDB.set_id(pedidoIdManager.createNewPedidoId());
 
         return pedidoDB;
+    }
+
+    public Pedido pedidoDBtoPedido(PedidoDB pedidoDB) {
+        Pedido pedido = new Pedido();
+        List<Plato> platos = new ArrayList<>();
+        List<Producto> otros = new ArrayList<>();
+
+        pedido.setCorreoCliente(pedidoDB.getCorreoCliente());
+        pedido.setDireccion(pedidoDB.getDireccion());
+        pedido.setPrecio(Double.parseDouble(String.format("%.2f", pedidoDB.getPrecio()).replace(",", ".")));
+
+        pedidoDB.getPlatos().forEach(platoDB -> {
+            if (pedidoIdManager.getPlatoId(platoDB.get_id()) == null) {
+                pedidoIdManager.anadirPlatoObjectId(platoDB.get_id());
+            }
+            platos.add(platoDBtoPlato(platoDB));
+        });
+        pedido.setPlatos(platos);
+        pedidoDB.getOtros().forEach(productoDB -> otros.add(productoDBtoProducto(productoDB)));
+        pedido.setOtros(otros);
+
+        switch (EstadoPedido.valueOf(pedidoDB.getEstado())) {
+            case ANULADO -> pedido.setEstado(EstadoPedido.ANULADO);
+            case CLIENTE_ELIGIENDO -> pedido.setEstado(EstadoPedido.CLIENTE_ELIGIENDO);
+            case ENTREGADO -> pedido.setEstado(EstadoPedido.ENTREGADO);
+            case EN_PREPARACION -> pedido.setEstado(EstadoPedido.EN_PREPARACION);
+            case EN_REPARTO -> pedido.setEstado(EstadoPedido.EN_REPARTO);
+        }
+
+        pedido.setId(pedidoIdManager.getPedidoId(pedidoDB.get_id()));
+
+        return pedido;
     }
 
     private ProductoDB productoPedidoToProductoDBPedido(Producto producto) {
@@ -139,32 +183,5 @@ public class DatabaseUiParser {
         platoDB.setIngredientes(ingredientes);
         platoDB.set_id(platoIdManager.createNewId());
         return platoDB;
-    }
-
-    public Pedido pedidoDBtoPedido(PedidoDB pedidoDB) {
-        Pedido pedido = new Pedido();
-        List<Plato> platos = new ArrayList<>();
-        List<Producto> otros = new ArrayList<>();
-
-        pedido.setCorreoCliente(pedidoDB.getCorreoCliente());
-        pedido.setDireccion(pedidoDB.getDireccion());
-        pedido.setPrecio(pedidoDB.getPrecio());
-
-        pedidoDB.getPlatos().forEach(platoDB -> platos.add(platoDBtoPlato(platoDB)));
-        pedido.setPlatos(platos);
-        pedidoDB.getOtros().forEach(productoDB -> otros.add(productoDBtoProducto(productoDB)));
-        pedido.setOtros(otros);
-
-        switch (EstadoPedido.valueOf(pedidoDB.getEstado())){
-            case ANULADO -> pedido.setEstado(EstadoPedido.ANULADO);
-            case CLIENTE_ELIGIENDO -> pedido.setEstado(EstadoPedido.CLIENTE_ELIGIENDO);
-            case ENTREGADO -> pedido.setEstado(EstadoPedido.ENTREGADO);
-            case EN_PREPARACION -> pedido.setEstado(EstadoPedido.EN_PREPARACION);
-            case EN_REPARTO -> pedido.setEstado(EstadoPedido.EN_REPARTO);
-        }
-
-        pedido.setId(pedidoIdManager.getId(pedidoDB.get_id()));
-
-        return pedido;
     }
 }

@@ -3,7 +3,6 @@ package com.tierraburritoservidor.dao.repositories;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.tierraburritoservidor.common.ConstantesErrores;
 import com.tierraburritoservidor.dao.RepositoryUsuariosInterface;

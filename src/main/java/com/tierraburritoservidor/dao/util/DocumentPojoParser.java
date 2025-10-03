@@ -2,6 +2,7 @@ package com.tierraburritoservidor.dao.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.tierraburritoservidor.dao.model.PedidoDB;
 import com.tierraburritoservidor.dao.model.PlatoDB;
 import com.tierraburritoservidor.dao.model.ProductoDB;
 import com.tierraburritoservidor.dao.model.UsuarioDB;
@@ -37,5 +38,12 @@ public class DocumentPojoParser {
         ProductoDB productoDB = gson.fromJson(document.toJson(), ProductoDB.class);
         productoDB.set_id(document.getObjectId("_id"));
         return productoDB;
+    }
+
+    public PedidoDB documentToPedidoDB(Document document) {
+        PedidoDB pedido = gson.fromJson(document.toJson(), PedidoDB.class);
+        pedido.set_id(document.getObjectId("_id"));
+        List<PlatoDB> platos = (List<PlatoDB>) document.get("platos");
+        return pedido;
     }
 }

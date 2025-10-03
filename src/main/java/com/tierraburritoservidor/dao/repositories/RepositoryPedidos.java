@@ -3,20 +3,22 @@ package com.tierraburritoservidor.dao.repositories;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
 import com.tierraburritoservidor.common.Constantes;
 import com.tierraburritoservidor.common.ConstantesErrores;
 import com.tierraburritoservidor.dao.RepositoryPedidosInterface;
 import com.tierraburritoservidor.dao.model.PedidoDB;
-import com.tierraburritoservidor.dao.util.*;
+import com.tierraburritoservidor.dao.model.PlatoDB;
+import com.tierraburritoservidor.dao.util.DocumentPojoParser;
+import com.tierraburritoservidor.dao.util.PedidoIdManager;
+import com.tierraburritoservidor.dao.util.ProductoIdManager;
 import com.tierraburritoservidor.domain.model.*;
-import com.tierraburritoservidor.errors.exceptions.CorreoYaExisteException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
 
     private final DocumentPojoParser documentPojoParser;
     private final PedidoIdManager pedidoIdManager;
+    private final ProductoIdManager productoIdManager;
     private final MongoTemplate mongoTemplate;
     private final Gson gson = new GsonBuilder()
             .create();
@@ -52,7 +55,6 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
                             new Producto(7, Ingredientes.GUACAMOLE.name(), 2.50, "https://www.tierraburritos.com/wp-content/uploads/Guacamole-1140x1050.png"),
                             new Producto(19, Ingredientes.SALSA_DE_QUESO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/SalsaQueso-1140x1050.jpg")), List.of(), 8.99, "https://www.tierraburritos.com/wp-content/uploads/10_Tacos-1.jpg")
             ), List.of(), 19.98, EstadoPedido.ENTREGADO)));
-
 
 
     public String addPedido(PedidoDB pedido) {
@@ -77,19 +79,52 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
             Document pedidoDocument = (Document) mongoTemplate.getConverter().convertToMongoType(pedido); //todo mapear asi los objetos
             collection.insertOne(pedidoDocument);
             ObjectId generatedObjectId = pedidoDocument.getObjectId("_id");
-            pedidoIdManager.anadirObjectId(generatedObjectId);
+            pedidoIdManager.anadirPedidoObjectId(generatedObjectId);
         } catch (Exception e) {
             log.error(ConstantesErrores.ERROR_CREANDO_PEDIDO, e.getMessage(), e);
-            throw new  RuntimeException(ConstantesErrores.ERROR_CREANDO_PEDIDO);
+            throw new RuntimeException(ConstantesErrores.ERROR_CREANDO_PEDIDO);
         }
         return Constantes.PEDIDO_HECHO;
     }
 
 
-
-
     public List<PedidoDB> getPedidosByCorreo(String correoCliente) {
-        return null;
+        List<PedidoDB> pedidos = new ArrayList<>();
+        try {
+            MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
+
+            //List<Document> documents = (List<Document>) mongoTemplate.getConverter().convertToMongoType(collection);
+            Query query = new Query();
+            query.addCriteria(Criteria.where("correoCliente").is(correoCliente));
+            pedidos = mongoTemplate.find(query, PedidoDB.class, COLLECTION_NAME);
+
+            //(Filters.eq("correoCliente", correoCliente)).into(new ArrayList<>());
+
+//            documents.forEach(document ->
+//                    pedidos.add(documentPojoParser.documentToPedidoDB(document)));
+
+            pedidos.forEach(pedido -> {
+                if (pedidoIdManager.getPedidoId(pedido.get_id()) == null) {
+                    pedidoIdManager.anadirPedidoObjectId(pedido.get_id());
+                }
+            });
+//            documents.forEach(pedido -> pedido.getList("platos", PlatoDB.class)
+//                    .forEach(plato -> {
+//                        List<ObjectId> ingredientes = new ArrayList<>();
+//                        plato.getIngredientes().forEach(ingrediente -> {
+//                            ingredientes.add(ingrediente);
+//                        });
+//                        if (pedidoIdManager.getPlatoId(plato.get_id()) == null) {
+//                            pedidoIdManager.anadirPlatoObjectId(plato.get_id());
+//                        } else {
+//                            pedidoIdManager.anadirPlatoObjectId(plato.get_id());
+//                        }
+//                    }));
+        } catch (Exception e) {
+            log.error("Error al obtener pedidos por correo: {}", e.getMessage(), e);
+
+        }
+        return pedidos;
     }
 
 

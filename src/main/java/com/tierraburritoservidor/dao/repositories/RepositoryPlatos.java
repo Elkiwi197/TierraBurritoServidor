@@ -44,7 +44,6 @@ public class RepositoryPlatos implements RepositoryPlatosInterface {
             List<Document> documents = collection.find().into(new ArrayList<>());
             HashMap<ObjectId, Integer> newPlatoIds = new HashMap<>();
             HashMap<ObjectId, Integer> newProductoIds = new HashMap<>();
-            List<ObjectId> objectIdsIngredientes = new ArrayList<>();
             documents.forEach(document -> {
                 PlatoDB plato = documentPojoParser.documentToPlatoDB(document);
                 newPlatoIds.put(document.getObjectId("_id"), newPlatoIds.size() + 1);
