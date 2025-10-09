@@ -68,7 +68,8 @@ public class TokenFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
         return path.contains("/signup") || path.contains("/login") || path.contains("/favicon")
-                || path.contains("/");
+                //|| path.contains("/")
+                ;
                 //todo borrar este ultimo, mientras este activo no compruebara tokens
     }
 }

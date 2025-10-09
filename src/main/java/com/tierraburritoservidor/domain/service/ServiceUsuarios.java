@@ -2,6 +2,7 @@ package com.tierraburritoservidor.domain.service;
 
 import com.tierraburritoservidor.dao.model.UsuarioDB;
 import com.tierraburritoservidor.dao.repositories.RepositoryUsuarios;
+import com.tierraburritoservidor.domain.model.TipoUsuario;
 import com.tierraburritoservidor.domain.model.Usuario;
 import com.tierraburritoservidor.domain.util.DatabaseUiParser;
 import com.tierraburritoservidor.errors.exceptions.*;
@@ -64,4 +65,6 @@ public class ServiceUsuarios {
     public Usuario getUsuarioByCorreo(String correo) {
         return databaseUiParser.usuarioDbToUsuario(repositoryUsuarios.getUsuarioByCorreo(correo));
     }
+
+
 }

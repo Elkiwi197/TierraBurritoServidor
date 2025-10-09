@@ -9,6 +9,7 @@ import com.tierraburritoservidor.dao.RepositoryUsuariosInterface;
 import com.tierraburritoservidor.dao.model.UsuarioDB;
 import com.tierraburritoservidor.dao.util.DocumentPojoParser;
 import com.tierraburritoservidor.dao.util.UserIdManager;
+import com.tierraburritoservidor.domain.model.TipoUsuario;
 import com.tierraburritoservidor.errors.exceptions.CorreoYaExisteException;
 import com.tierraburritoservidor.errors.exceptions.UsuarioNoEncontradoException;
 import lombok.RequiredArgsConstructor;
@@ -140,4 +141,6 @@ public class RepositoryUsuarios implements RepositoryUsuariosInterface {
         }
         return usuario;
     }
+
+
 }

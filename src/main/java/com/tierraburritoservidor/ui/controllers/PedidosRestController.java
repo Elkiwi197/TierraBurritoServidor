@@ -21,6 +21,12 @@ public class PedidosRestController {
         return servicePedidos.getPedidosByCorreo(correoCliente);
     }
 
+    @GetMapping("/usuario/enPreparacion")
+    public List<Pedido> getPedidosEnPreparacion() {
+        return null;
+                //todo servicePedidos.getPedidosEnPreparacion();
+    }
+
     @PostMapping("/anadirPedido")
     public String addPlatoPedidoActual(@RequestBody Pedido pedido) {
         return servicePedidos.addPedido(pedido);

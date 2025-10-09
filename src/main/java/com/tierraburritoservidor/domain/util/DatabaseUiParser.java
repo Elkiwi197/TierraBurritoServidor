@@ -40,9 +40,9 @@ public class DatabaseUiParser {
 
         usuario.setId(userIdManager.getId(usuarioDB.get_id()));
 
-        if (usuarioDB.getTipoUsuario().equals(TipoUsuario.CLIENTE)) {
+        if (usuarioDB.getTipoUsuario().equalsIgnoreCase(TipoUsuario.CLIENTE.toString())) {
             usuario.setTipoUsuario(TipoUsuario.CLIENTE);
-        } else if (usuarioDB.getTipoUsuario().equals(TipoUsuario.REPARTIDOR)) {
+        } else if (usuarioDB.getTipoUsuario().equalsIgnoreCase(TipoUsuario.REPARTIDOR.toString())) {
             usuario.setTipoUsuario(TipoUsuario.REPARTIDOR);
         }
 
@@ -106,7 +106,7 @@ public class DatabaseUiParser {
         pedidoDB.setCorreoCliente(pedido.getCorreoCliente());
         pedidoDB.setDireccion(pedido.getDireccion());
         pedidoDB.setEstado(pedido.getEstado().toString());
-        pedidoDB.setPrecio(Double.parseDouble(String.format("%.2f", pedido.getPrecio())));
+        pedidoDB.setPrecio(Double.parseDouble(String.format("%.2f", pedido.getPrecio()).replace(",", ".")));
 
         List<PlatoDB> platosDB = new ArrayList<>();
         pedido.getPlatos().forEach(plato -> {

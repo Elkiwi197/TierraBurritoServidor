@@ -4,6 +4,7 @@ package com.tierraburritoservidor.ui.controllers;
 import com.tierraburritoservidor.common.ConstantesErrores;
 import com.tierraburritoservidor.config.auth.AuthenticationResponse;
 import com.tierraburritoservidor.config.auth.ConfigurationTokens;
+import com.tierraburritoservidor.domain.model.TipoUsuario;
 import com.tierraburritoservidor.domain.service.ServiceUsuarios;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -23,12 +24,14 @@ public class LoginRestController {
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestParam @NotBlank String correo, @RequestParam @NotBlank String contrasena) {
         serviceUsuarios.comprobarCredenciales(correo, contrasena);
-        String accessToken = configurationTokens.crearToken(correo, 1200);
-        String refreshToken = configurationTokens.crearToken(correo, 20000);
+        TipoUsuario tipoUsuario = serviceUsuarios.getUsuarioByCorreo(correo).getTipoUsuario();
+        String accessToken = configurationTokens.crearToken(correo, 120000);
+        String refreshToken = configurationTokens.crearToken(correo, 900000);
         return ResponseEntity.ok().body(
                 AuthenticationResponse.builder()
                         .accessToken(accessToken)
                         .refreshToken(refreshToken)
+                        .tipoUsuario(tipoUsuario)
                         .build());
     }
 
@@ -38,9 +41,11 @@ public class LoginRestController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, ConstantesErrores.TOKEN_INVALIDO);
         }
         String correoUsuario = configurationTokens.getCorreo(refreshToken);
+        TipoUsuario tipoUsuario = serviceUsuarios.getUsuarioByCorreo(correoUsuario).getTipoUsuario();
         String newAccessToken = configurationTokens.crearToken(correoUsuario, 1200000);
         return AuthenticationResponse.builder()
                 .accessToken(newAccessToken)
+//esto no deberia hacer falta        .tfipoUsuario(tipoUsuario)
                 .build();
     }
 }
