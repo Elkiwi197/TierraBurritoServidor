@@ -7,7 +7,6 @@ import com.tierraburritoservidor.common.Constantes;
 import com.tierraburritoservidor.common.ConstantesErrores;
 import com.tierraburritoservidor.dao.RepositoryPedidosInterface;
 import com.tierraburritoservidor.dao.model.PedidoDB;
-import com.tierraburritoservidor.dao.model.PlatoDB;
 import com.tierraburritoservidor.dao.util.DocumentPojoParser;
 import com.tierraburritoservidor.dao.util.PedidoIdManager;
 import com.tierraburritoservidor.dao.util.ProductoIdManager;
@@ -17,8 +16,8 @@ import lombok.extern.log4j.Log4j2;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -91,35 +90,17 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
     public List<PedidoDB> getPedidosByCorreo(String correoCliente) {
         List<PedidoDB> pedidos = new ArrayList<>();
         try {
-            MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
+            // MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
 
-            //List<Document> documents = (List<Document>) mongoTemplate.getConverter().convertToMongoType(collection);
             Query query = new Query();
             query.addCriteria(Criteria.where("correoCliente").is(correoCliente));
             pedidos = mongoTemplate.find(query, PedidoDB.class, COLLECTION_NAME);
-
-            //(Filters.eq("correoCliente", correoCliente)).into(new ArrayList<>());
-
-//            documents.forEach(document ->
-//                    pedidos.add(documentPojoParser.documentToPedidoDB(document)));
 
             pedidos.forEach(pedido -> {
                 if (pedidoIdManager.getPedidoId(pedido.get_id()) == null) {
                     pedidoIdManager.anadirPedidoObjectId(pedido.get_id());
                 }
             });
-//            documents.forEach(pedido -> pedido.getList("platos", PlatoDB.class)
-//                    .forEach(plato -> {
-//                        List<ObjectId> ingredientes = new ArrayList<>();
-//                        plato.getIngredientes().forEach(ingrediente -> {
-//                            ingredientes.add(ingrediente);
-//                        });
-//                        if (pedidoIdManager.getPlatoId(plato.get_id()) == null) {
-//                            pedidoIdManager.anadirPlatoObjectId(plato.get_id());
-//                        } else {
-//                            pedidoIdManager.anadirPlatoObjectId(plato.get_id());
-//                        }
-//                    }));
         } catch (Exception e) {
             log.error("Error al obtener pedidos por correo: {}", e.getMessage(), e);
 
@@ -127,6 +108,26 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
         return pedidos;
     }
 
+    @Override
+    public List<PedidoDB> getPedidosEnPreparacion() {
+        List<PedidoDB> pedidos = new ArrayList<>();
+        try {
+            // MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
 
+            Query query = new Query();
+            query.addCriteria(Criteria.where("estado").is(EstadoPedido.EN_PREPARACION.toString()));
+            pedidos = mongoTemplate.find(query, PedidoDB.class, COLLECTION_NAME);
+
+            pedidos.forEach(pedido -> {
+                if (pedidoIdManager.getPedidoId(pedido.get_id()) == null) {
+                    pedidoIdManager.anadirPedidoObjectId(pedido.get_id());
+                }
+            });
+        } catch (Exception e) {
+            log.error("Error al obtener pedidos por correo: {}", e.getMessage(), e);
+
+        }
+        return pedidos;
+    }
 }
 

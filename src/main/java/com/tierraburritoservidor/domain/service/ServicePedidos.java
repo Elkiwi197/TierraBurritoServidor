@@ -24,6 +24,7 @@ public class ServicePedidos {
 
 
     public List<Pedido> getPedidosByCorreo(String correoCliente) {
+        repositoryProductos.getIngredientes();
         List<PedidoDB> pedidosDB = repositoryPedidos.getPedidosByCorreo(correoCliente);
         if (pedidosDB.isEmpty()) {
             throw new PedidosNoEncontradoException();
@@ -54,9 +55,39 @@ public class ServicePedidos {
     }
 
     public String addPedido(Pedido pedido) {
+        repositoryProductos.getIngredientes(); //Para inicializar los IDs de los ingredientes
         PedidoDB pedidoDB = databaseUiParser.pedidoToPedidoDB(pedido);
         return repositoryPedidos.addPedido(pedidoDB);
     }
 
 
+    public List<Pedido> getPedidosEnPreparacion() {
+        List<PedidoDB> pedidosDB = repositoryPedidos.getPedidosEnPreparacion();
+        if (pedidosDB.isEmpty()) {
+            throw new PedidosNoEncontradoException();
+        }
+        List<Pedido> pedidos = new ArrayList<>();
+        pedidosDB.forEach(pedidoDB -> {
+            Pedido pedido = databaseUiParser.pedidoDBtoPedido(pedidoDB);
+            pedido.getPlatos().clear();
+            pedidoDB.getPlatos().forEach(platoDB -> {
+                Plato plato = new Plato();
+                List<Producto> ingredientes = new ArrayList<>();
+                platoDB.getIngredientes().forEach(objectId ->
+                        ingredientes.add(databaseUiParser.productoDBtoProducto(repositoryProductos.getProductoByObjectId(objectId))));
+                plato = databaseUiParser.platoDBtoPlato(platoDB);
+                plato.setIngredientes(ingredientes);
+                pedido.getPlatos().add(plato);
+            });
+            pedidos.add(pedido);
+        });
+        pedidos.forEach(pedido -> pedido.getPlatos()
+                .forEach(plato -> {
+                    List<Producto> ingredientes = new ArrayList<>();
+                    plato.getIngredientes()
+                            .forEach(ingrediente -> ingredientes.add(databaseUiParser.productoDBtoProducto(repositoryProductos.getProductoByNombre(ingrediente.getNombre()))));
+                    plato.setIngredientes(ingredientes);
+                }));
+        return pedidos;
+    }
 }

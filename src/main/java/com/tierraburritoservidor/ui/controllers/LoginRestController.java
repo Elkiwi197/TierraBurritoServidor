@@ -41,7 +41,7 @@ public class LoginRestController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, ConstantesErrores.TOKEN_INVALIDO);
         }
         String correoUsuario = configurationTokens.getCorreo(refreshToken);
-        TipoUsuario tipoUsuario = serviceUsuarios.getUsuarioByCorreo(correoUsuario).getTipoUsuario();
+   //     TipoUsuario tipoUsuario = serviceUsuarios.getUsuarioByCorreo(correoUsuario).getTipoUsuario();
         String newAccessToken = configurationTokens.crearToken(correoUsuario, 1200000);
         return AuthenticationResponse.builder()
                 .accessToken(newAccessToken)

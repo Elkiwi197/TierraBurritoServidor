@@ -11,4 +11,5 @@ public interface RepositoryPedidosInterface {
 
     String addPedido(PedidoDB pedido);
 
+    List<PedidoDB> getPedidosEnPreparacion();
 }

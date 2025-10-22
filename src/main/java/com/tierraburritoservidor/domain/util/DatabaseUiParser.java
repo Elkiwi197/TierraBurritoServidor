@@ -180,6 +180,7 @@ public class DatabaseUiParser {
 
         List<ObjectId> ingredientes = new ArrayList<>();
         plato.getIngredientes().forEach(i -> ingredientes.add(productoIdManager.getObjectId(i.getId())));
+        plato.getExtras().forEach(e -> ingredientes.add(productoIdManager.getObjectId(e.getId())));
         platoDB.setIngredientes(ingredientes);
         platoDB.set_id(platoIdManager.createNewId());
         return platoDB;
