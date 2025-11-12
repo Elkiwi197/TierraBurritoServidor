@@ -2,7 +2,6 @@ package com.tierraburritoservidor.domain.service;
 
 import com.tierraburritoservidor.dao.model.UsuarioDB;
 import com.tierraburritoservidor.dao.repositories.RepositoryUsuarios;
-import com.tierraburritoservidor.domain.model.TipoUsuario;
 import com.tierraburritoservidor.domain.model.Usuario;
 import com.tierraburritoservidor.domain.util.DatabaseUiParser;
 import com.tierraburritoservidor.errors.exceptions.*;
@@ -21,12 +20,14 @@ public class ServiceUsuarios {
 
     public void comprobarCredenciales(String correo, String contrasena) {
         repositoryUsuarios.cargarIdsUsuarios();
-        Usuario usuario = databaseUiParser.usuarioDbToUsuario(repositoryUsuarios.getUsuarioByCorreo(correo));
-        if (!usuario.isActivado()){
-            throw new UsuarioNoActivadoException();
-        }
-        if (!usuario.getContrasena().equals(contrasena)) {
-            throw new UsuarioContrasenaIncorrectosException();
+        UsuarioDB usuarioDB = repositoryUsuarios.getUsuarioByCorreo(correo);
+        if (usuarioDB != null) {
+            if (!usuarioDB.isActivado()) {
+                throw new UsuarioNoActivadoException();
+            }
+            if (!usuarioDB.getContrasena().equals(contrasena)) {
+                throw new UsuarioContrasenaIncorrectosException();
+            }
         }
     }
 
@@ -63,7 +64,12 @@ public class ServiceUsuarios {
     }
 
     public Usuario getUsuarioByCorreo(String correo) {
-        return databaseUiParser.usuarioDbToUsuario(repositoryUsuarios.getUsuarioByCorreo(correo));
+        UsuarioDB usuarioDB = repositoryUsuarios.getUsuarioByCorreo(correo);
+        if (usuarioDB != null) {
+            return databaseUiParser.usuarioDbToUsuario(usuarioDB);
+        } else {
+            return null;
+        }
     }
 
 

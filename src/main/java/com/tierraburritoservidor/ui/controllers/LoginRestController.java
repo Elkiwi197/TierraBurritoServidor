@@ -8,6 +8,7 @@ import com.tierraburritoservidor.domain.model.TipoUsuario;
 import com.tierraburritoservidor.domain.service.ServiceUsuarios;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("")
 @RequiredArgsConstructor
+@Log4j2
 public class LoginRestController {
 
     private final ConfigurationTokens configurationTokens;
@@ -42,7 +44,8 @@ public class LoginRestController {
         }
         String correoUsuario = configurationTokens.getCorreo(refreshToken);
    //     TipoUsuario tipoUsuario = serviceUsuarios.getUsuarioByCorreo(correoUsuario).getTipoUsuario();
-        String newAccessToken = configurationTokens.crearToken(correoUsuario, 1200000);
+        String newAccessToken = configurationTokens.crearToken(correoUsuario, 120000);
+        log.info("Token renovado a " + correoUsuario);
         return AuthenticationResponse.builder()
                 .accessToken(newAccessToken)
 //esto no deberia hacer falta        .tfipoUsuario(tipoUsuario)

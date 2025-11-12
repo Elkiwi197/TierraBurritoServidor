@@ -3,6 +3,7 @@ package com.tierraburritoservidor.domain.service;
 import com.tierraburritoservidor.dao.model.PedidoDB;
 import com.tierraburritoservidor.dao.repositories.RepositoryPedidos;
 import com.tierraburritoservidor.dao.repositories.RepositoryProductos;
+import com.tierraburritoservidor.dao.repositories.RepositoryUsuarios;
 import com.tierraburritoservidor.domain.model.Pedido;
 import com.tierraburritoservidor.domain.model.Plato;
 import com.tierraburritoservidor.domain.model.Producto;
@@ -21,11 +22,12 @@ public class ServicePedidos {
     private final RepositoryPedidos repositoryPedidos;
     private final RepositoryProductos repositoryProductos;
     private final DatabaseUiParser databaseUiParser;
+    private final RepositoryUsuarios repositoryUsuarios;
 
 
-    public List<Pedido> getPedidosByCorreo(String correoCliente) {
+    public List<Pedido> getPedidosByCorreoCliente(String correoCliente) {
         repositoryProductos.getIngredientes();
-        List<PedidoDB> pedidosDB = repositoryPedidos.getPedidosByCorreo(correoCliente);
+        List<PedidoDB> pedidosDB = repositoryPedidos.getPedidosByCorreoCliente(correoCliente);
         if (pedidosDB.isEmpty()) {
             throw new PedidosNoEncontradoException();
         }
@@ -89,5 +91,43 @@ public class ServicePedidos {
                     plato.setIngredientes(ingredientes);
                 }));
         return pedidos;
+    }
+
+    public String aceptarPedido(int idPedido, String correoRepartidor) {
+        return repositoryPedidos.aceptarPedido(idPedido, correoRepartidor);
+    }
+
+    public String cancelarPedido(int idPedido, String correo) {
+        return repositoryPedidos.cancelarPedido(idPedido, correo);
+    }
+
+    public Pedido getPedidoAceptado(String correoRepartidor) {
+        repositoryPedidos.inicializarPedidos();
+        repositoryProductos.getIngredientes();
+        PedidoDB pedidoDB = repositoryPedidos.getPedidoAceptado(correoRepartidor);
+        if (pedidoDB != null) {
+            Pedido pedido = databaseUiParser.pedidoDBtoPedido(pedidoDB);
+            pedido.getPlatos().clear();
+            pedidoDB.getPlatos().forEach(platoDB -> {
+                Plato plato = new Plato();
+                List<Producto> ingredientes = new ArrayList<>();
+                platoDB.getIngredientes().forEach(objectId ->
+                        ingredientes.add(databaseUiParser.productoDBtoProducto(repositoryProductos.getProductoByObjectId(objectId))));
+                plato = databaseUiParser.platoDBtoPlato(platoDB);
+                plato.setIngredientes(ingredientes);
+                pedido.getPlatos().add(plato);
+            });
+            pedido.getPlatos().
+                    forEach(plato ->
+                    {
+                        List<Producto> ingredientes = new ArrayList<>();
+                        plato.getIngredientes()
+                                .forEach(ingrediente -> ingredientes.add(databaseUiParser.productoDBtoProducto(repositoryProductos.getProductoByNombre(ingrediente.getNombre()))));
+                        plato.setIngredientes(ingredientes);
+                    });
+            return pedido;
+        } else {
+            return null;
+        }
     }
 }

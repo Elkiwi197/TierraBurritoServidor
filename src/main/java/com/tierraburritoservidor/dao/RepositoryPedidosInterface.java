@@ -1,15 +1,20 @@
 package com.tierraburritoservidor.dao;
 
 import com.tierraburritoservidor.dao.model.PedidoDB;
-import com.tierraburritoservidor.domain.model.Pedido;
 
 import java.util.List;
 
 public interface RepositoryPedidosInterface {
 
-    List<PedidoDB> getPedidosByCorreo(String correoCliente);
+    List<PedidoDB> getPedidosByCorreoCliente(String correoCliente);
 
     String addPedido(PedidoDB pedido);
 
     List<PedidoDB> getPedidosEnPreparacion();
+
+    String aceptarPedido(int idPedido, String correoRepartidor);
+
+    String cancelarPedido(int idPedido, String correo);
+
+    PedidoDB getPedidoAceptado(String correoRepartidor);
 }

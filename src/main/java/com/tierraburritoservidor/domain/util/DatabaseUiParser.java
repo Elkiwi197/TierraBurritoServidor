@@ -58,7 +58,6 @@ public class DatabaseUiParser {
         usuarioDB.setContrasena(usuario.getContrasena());
         usuarioDB.setCorreo(usuario.getCorreo());
 
-        //usuarioDB.set_id(userIdManager.createNewId());
         if (usuario.getTipoUsuario().equals(TipoUsuario.CLIENTE)) {
             usuarioDB.setTipoUsuario(TipoUsuario.CLIENTE.toString());
         } else if (usuario.getTipoUsuario().equals(TipoUsuario.REPARTIDOR)) {
@@ -83,7 +82,6 @@ public class DatabaseUiParser {
             plato.setId(pedidoIdManager.getPlatoId(platoDB.get_id()));
         }
         return plato;
-        //si falla el de userdb to user este falla tambien
     }
 
     public Producto productoDBtoProducto(ProductoDB productoDB) {
@@ -98,15 +96,16 @@ public class DatabaseUiParser {
 
         producto.setId(productoIdManager.getId(productoDB.get_id()));
         return producto;
-        //si falla el de userdb to user este falla tambien
     }
 
     public PedidoDB pedidoToPedidoDB(Pedido pedido) {
         PedidoDB pedidoDB = new PedidoDB();
         pedidoDB.setCorreoCliente(pedido.getCorreoCliente());
+        pedidoDB.setRepartidor(pedido.getCorreoRepartidor());
         pedidoDB.setDireccion(pedido.getDireccion());
         pedidoDB.setEstado(pedido.getEstado().toString());
         pedidoDB.setPrecio(Double.parseDouble(String.format("%.2f", pedido.getPrecio()).replace(",", ".")));
+        pedidoDB.setHoraLlegada(pedido.getHoraLlegada());
 
         List<PlatoDB> platosDB = new ArrayList<>();
         pedido.getPlatos().forEach(plato -> {
@@ -136,8 +135,10 @@ public class DatabaseUiParser {
         List<Producto> otros = new ArrayList<>();
 
         pedido.setCorreoCliente(pedidoDB.getCorreoCliente());
+        pedido.setCorreoRepartidor(pedidoDB.getRepartidor());
         pedido.setDireccion(pedidoDB.getDireccion());
         pedido.setPrecio(Double.parseDouble(String.format("%.2f", pedidoDB.getPrecio()).replace(",", ".")));
+        pedido.setHoraLlegada(pedidoDB.getHoraLlegada());
 
         pedidoDB.getPlatos().forEach(platoDB -> {
             if (pedidoIdManager.getPlatoId(platoDB.get_id()) == null) {
@@ -150,11 +151,12 @@ public class DatabaseUiParser {
         pedido.setOtros(otros);
 
         switch (EstadoPedido.valueOf(pedidoDB.getEstado())) {
-            case ANULADO -> pedido.setEstado(EstadoPedido.ANULADO);
             case CLIENTE_ELIGIENDO -> pedido.setEstado(EstadoPedido.CLIENTE_ELIGIENDO);
-            case ENTREGADO -> pedido.setEstado(EstadoPedido.ENTREGADO);
             case EN_PREPARACION -> pedido.setEstado(EstadoPedido.EN_PREPARACION);
+            case ACEPTADO -> pedido.setEstado(EstadoPedido.ACEPTADO);
             case EN_REPARTO -> pedido.setEstado(EstadoPedido.EN_REPARTO);
+            case CANCELADO -> pedido.setEstado(EstadoPedido.CANCELADO);
+            case ENTREGADO -> pedido.setEstado(EstadoPedido.ENTREGADO);
         }
 
         pedido.setId(pedidoIdManager.getPedidoId(pedidoDB.get_id()));

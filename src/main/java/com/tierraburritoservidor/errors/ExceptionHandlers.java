@@ -1,6 +1,7 @@
 package com.tierraburritoservidor.errors;
 
 import com.tierraburritoservidor.errors.exceptions.*;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -84,8 +85,8 @@ public class ExceptionHandlers {
     }
 
 
-    @ExceptionHandler(TokenCaducadoException.class)
-    public ResponseEntity<ApiError> handleException(TokenCaducadoException e) {
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ApiError> handleException(ExpiredJwtException e) {
         ApiError apiError = new ApiError(e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
     }

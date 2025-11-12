@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -20,4 +21,6 @@ public class PedidoDB {
     private List<ProductoDB> otros;
     private double precio;
     private String estado;
+    private String repartidor;
+    private LocalDateTime horaLlegada;
 }

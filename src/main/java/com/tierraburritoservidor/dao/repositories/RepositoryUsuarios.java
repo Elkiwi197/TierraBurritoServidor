@@ -9,7 +9,6 @@ import com.tierraburritoservidor.dao.RepositoryUsuariosInterface;
 import com.tierraburritoservidor.dao.model.UsuarioDB;
 import com.tierraburritoservidor.dao.util.DocumentPojoParser;
 import com.tierraburritoservidor.dao.util.UserIdManager;
-import com.tierraburritoservidor.domain.model.TipoUsuario;
 import com.tierraburritoservidor.errors.exceptions.CorreoYaExisteException;
 import com.tierraburritoservidor.errors.exceptions.UsuarioNoEncontradoException;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +39,6 @@ public class RepositoryUsuarios implements RepositoryUsuariosInterface {
     private final MongoTemplate mongoTemplate;
 
 
-
     public List<UsuarioDB> getUsuariosActivados() {
         List<UsuarioDB> usuarios = new ArrayList<>();
         try {
@@ -53,7 +51,7 @@ public class RepositoryUsuarios implements RepositoryUsuariosInterface {
             });
             userIdManager.setUserIds(newIds);
         } catch (Exception e) {
-            log.error( ConstantesErrores.ERROR_LEYENDO_USUARIOS, e.getMessage(), e);
+            log.error(ConstantesErrores.ERROR_LEYENDO_USUARIOS, e.getMessage(), e);
         }
         return usuarios;
     }
@@ -69,7 +67,7 @@ public class RepositoryUsuarios implements RepositoryUsuariosInterface {
             });
             userIdManager.setUserIds(newIds);
         } catch (Exception e) {
-            log.error( ConstantesErrores.ERROR_LEYENDO_USUARIOS, e.getMessage(), e);
+            log.error(ConstantesErrores.ERROR_LEYENDO_USUARIOS, e.getMessage(), e);
         }
     }
 
@@ -86,7 +84,7 @@ public class RepositoryUsuarios implements RepositoryUsuariosInterface {
             userIdManager.anadirObjectId(generatedObjectId);
         } catch (Exception e) {
             log.error(ConstantesErrores.ERROR_CREANDO_USUARIO, e.getMessage(), e);
-            throw new  RuntimeException(ConstantesErrores.ERROR_CREANDO_USUARIO);
+            throw new RuntimeException(ConstantesErrores.ERROR_CREANDO_USUARIO);
         }
     }
 
@@ -101,9 +99,11 @@ public class RepositoryUsuarios implements RepositoryUsuariosInterface {
             } else {
                 throw new UsuarioNoEncontradoException();
             }
+        } catch (UsuarioNoEncontradoException e) {
+            log.warn(ConstantesErrores.ERROR_LEYENDO_USUARIOS, e.getMessage(), e);
+            return null;
         } catch (Exception e) {
-            log.error("Error al obtener el usuario por correo: {}", e.getMessage(), e);
-            // Aquí podrías lanzar una excepción o retornar null, según el diseño de tu aplicación
+            log.error(ConstantesErrores.ERROR_LEYENDO_USUARIOS, e.getMessage(), e);
             return null;
         }
     }

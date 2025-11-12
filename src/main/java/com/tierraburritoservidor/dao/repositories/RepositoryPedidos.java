@@ -10,7 +10,7 @@ import com.tierraburritoservidor.dao.model.PedidoDB;
 import com.tierraburritoservidor.dao.util.DocumentPojoParser;
 import com.tierraburritoservidor.dao.util.PedidoIdManager;
 import com.tierraburritoservidor.dao.util.ProductoIdManager;
-import com.tierraburritoservidor.domain.model.*;
+import com.tierraburritoservidor.domain.model.EstadoPedido;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.bson.Document;
@@ -21,8 +21,10 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Updates.set;
 
 @Repository
 @RequiredArgsConstructor
@@ -38,39 +40,8 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
     private final Gson gson = new GsonBuilder()
             .create();
 
-    private List<Pedido> pedidos = new ArrayList<>(Arrays.asList(
-            new Pedido(1, "Calle falsa 123", "pepe@correo.es", List.of(
-                    new Plato(4, "Desnudo", List.of(
-                            new Producto(4, Ingredientes.CARNITAS.name(), 3.60, "https://www.tierraburritos.com/wp-content/uploads/Carnitas-1-1140x1050.jpg"),
-                            new Producto(1, Ingredientes.ARROZ_BLANCO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/ArrozBlanco-1140x1050.png"),
-                            new Producto(10, Ingredientes.MAIZ.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Maiz-1-1140x1050.jpg"),
-                            new Producto(20, Ingredientes.VERDURAS.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Verduras-1140x1050.png")
-                    ), List.of(), 10.99, "https://www.tierraburritos.com/wp-content/uploads/Desnudo_1-2.jpg"),
-                    new Plato(3, "Tacos", List.of(
-                            new Producto(4, Ingredientes.CARNITAS.name(), 3.60, "https://www.tierraburritos.com/wp-content/uploads/Carnitas-1-1140x1050.jpg"),
-                            new Producto(20, Ingredientes.VERDURAS.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Verduras-1140x1050.png"),
-                            new Producto(13, Ingredientes.QUESO_RALLADO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Queso-1140x1050.jpg"),
-                            new Producto(11, Ingredientes.PICO_DE_GALLO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/Picodegallo-1140x1050.jpg"),
-                            new Producto(7, Ingredientes.GUACAMOLE.name(), 2.50, "https://www.tierraburritos.com/wp-content/uploads/Guacamole-1140x1050.png"),
-                            new Producto(19, Ingredientes.SALSA_DE_QUESO.name(), 0.0, "https://www.tierraburritos.com/wp-content/uploads/SalsaQueso-1140x1050.jpg")), List.of(), 8.99, "https://www.tierraburritos.com/wp-content/uploads/10_Tacos-1.jpg")
-            ), List.of(), 19.98, EstadoPedido.ENTREGADO)));
-
 
     public String addPedido(PedidoDB pedido) {
-//        int id = 0;
-//        boolean repetido = true;
-//        while (repetido) {
-//            id = (int) (Math.random() * 100 + 1);
-//            int finalId = id;
-//            if (pedidos.stream().noneMatch(p -> p.getId() == finalId)) {
-//                repetido = false;
-//            }
-//        }
-//        pedido.setEstado(EstadoPedido.EN_PREPARACION);
-//        pedido.setId(id);
-//        pedidos.add(pedido);
-//        return Constantes.PEDIDO_HECHO;
-
         try {
             MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
 
@@ -79,6 +50,7 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
             collection.insertOne(pedidoDocument);
             ObjectId generatedObjectId = pedidoDocument.getObjectId("_id");
             pedidoIdManager.anadirPedidoObjectId(generatedObjectId);
+            log.info("Pedido añadido: " + pedidoIdManager.getPedidoId(pedido.get_id()) + ", " + pedido.get_id());
         } catch (Exception e) {
             log.error(ConstantesErrores.ERROR_CREANDO_PEDIDO, e.getMessage(), e);
             throw new RuntimeException(ConstantesErrores.ERROR_CREANDO_PEDIDO);
@@ -87,10 +59,9 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
     }
 
 
-    public List<PedidoDB> getPedidosByCorreo(String correoCliente) {
+    public List<PedidoDB> getPedidosByCorreoCliente(String correoCliente) {
         List<PedidoDB> pedidos = new ArrayList<>();
         try {
-            // MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
 
             Query query = new Query();
             query.addCriteria(Criteria.where("correoCliente").is(correoCliente));
@@ -112,7 +83,6 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
     public List<PedidoDB> getPedidosEnPreparacion() {
         List<PedidoDB> pedidos = new ArrayList<>();
         try {
-            // MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
 
             Query query = new Query();
             query.addCriteria(Criteria.where("estado").is(EstadoPedido.EN_PREPARACION.toString()));
@@ -128,6 +98,92 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
 
         }
         return pedidos;
+    }
+
+    @Override
+    public String aceptarPedido(int idPedido, String correoRepartidor) {
+        try {
+
+                Query query = new Query();
+            query.addCriteria(
+                    Criteria.where("repartidor").is(correoRepartidor)
+                            .and("estado").in(
+                                    EstadoPedido.ACEPTADO.toString(),
+                                    EstadoPedido.EN_REPARTO.toString()
+                            )
+            );
+
+            List<PedidoDB> pedidos = mongoTemplate.find(query, PedidoDB.class, COLLECTION_NAME);
+
+            if (pedidos.isEmpty()) {
+                MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
+                collection.updateOne(
+                        eq("_id", pedidoIdManager.getPedidoObjectId(idPedido)),
+                        set("estado", EstadoPedido.ACEPTADO)
+                );
+                collection.updateOne(
+                        eq("_id", pedidoIdManager.getPedidoObjectId(idPedido)),
+                        set("repartidor", correoRepartidor)
+                );
+                log.info("Pedido aceptado por " + correoRepartidor);
+            } else {
+                return Constantes.NO_PUEDES_ACEPTAR_VARIOS_PEDIDOS_A_LA_VEZ;
+            }
+        } catch (Exception e) {
+            log.error("Error actualizando pedido: {}", e.getMessage(), e);
+            return ConstantesErrores.ERROR_ACEPTANDO_PEDIDO;
+        }
+        return Constantes.PEDIDO_ACEPTADO;
+    }
+
+    @Override
+    public String cancelarPedido(int idPedido, String correo) {
+        try {
+            MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
+            collection.updateOne(
+                    eq("_id", pedidoIdManager.getPedidoObjectId(idPedido)),
+                    set("estado", EstadoPedido.CANCELADO)
+            );
+            log.info("Pedido " + idPedido + " cancelado por " + correo);
+        } catch (Exception e) {
+            log.error("Error actualizando pedido: {}", e.getMessage(), e);
+            return ConstantesErrores.ERROR_CANCELANDO_PEDIDO;
+        }
+        return Constantes.PEDIDO_CANCELADO;
+    }
+
+    @Override
+    public PedidoDB getPedidoAceptado(String correoRepartidor) {
+        PedidoDB pedidoDB = null;
+        try {
+            Query query = new Query();
+            query.addCriteria(Criteria.where("repartidor").is(correoRepartidor)
+                    .and("estado").is(EstadoPedido.ACEPTADO.name()));
+            pedidoDB = mongoTemplate.findOne(query, PedidoDB.class, COLLECTION_NAME);
+            if (pedidoDB == null){
+                log.info("El repartidor no tiene ningún pedido aceptado");
+            }
+        } catch (Exception e) {
+            log.error("Error al obtener pedido aceptado: {}", e.getMessage(), e);
+        }
+        return pedidoDB;
+    }
+
+    public void inicializarPedidos() {
+        try {
+            List<PedidoDB> pedidos = new ArrayList<>();
+            Query query = new Query();
+            pedidos = mongoTemplate.find(query, PedidoDB.class, COLLECTION_NAME);
+
+            pedidos.forEach(pedido -> {
+                if (pedidoIdManager.getPedidoId(pedido.get_id()) == null) {
+                    pedidoIdManager.anadirPedidoObjectId(pedido.get_id());
+                }
+            });
+        } catch (Exception e) {
+            log.error("Error al inicializar pedidos: {}", e.getMessage(), e);
+
+        }
     }
 }
 
