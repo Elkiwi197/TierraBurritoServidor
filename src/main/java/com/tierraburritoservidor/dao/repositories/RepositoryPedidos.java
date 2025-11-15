@@ -41,6 +41,23 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
             .create();
 
 
+    public void inicializarPedidos() {
+        try {
+            List<PedidoDB> pedidos = new ArrayList<>();
+            Query query = new Query();
+            pedidos = mongoTemplate.find(query, PedidoDB.class, COLLECTION_NAME);
+
+            pedidos.forEach(pedido -> {
+                if (pedidoIdManager.getPedidoId(pedido.get_id()) == null) {
+                    pedidoIdManager.anadirPedidoObjectId(pedido.get_id());
+                }
+            });
+        } catch (Exception e) {
+            log.error("Error al inicializar pedidos: {}", e.getMessage(), e);
+
+        }
+    }
+
     public String addPedido(PedidoDB pedido) {
         try {
             MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
@@ -104,7 +121,7 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
     public String aceptarPedido(int idPedido, String correoRepartidor) {
         try {
 
-                Query query = new Query();
+            Query query = new Query();
             query.addCriteria(
                     Criteria.where("repartidor").is(correoRepartidor)
                             .and("estado").in(
@@ -137,14 +154,14 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
     }
 
     @Override
-    public String cancelarPedido(int idPedido, String correo) {
+    public String cancelarPedido(int idPedido, String correoRepartidor) {
         try {
             MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
             collection.updateOne(
                     eq("_id", pedidoIdManager.getPedidoObjectId(idPedido)),
                     set("estado", EstadoPedido.CANCELADO)
             );
-            log.info("Pedido " + idPedido + " cancelado por " + correo);
+            log.info("Pedido " + idPedido + " cancelado por " + correoRepartidor);
         } catch (Exception e) {
             log.error("Error actualizando pedido: {}", e.getMessage(), e);
             return ConstantesErrores.ERROR_CANCELANDO_PEDIDO;
@@ -160,7 +177,7 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
             query.addCriteria(Criteria.where("repartidor").is(correoRepartidor)
                     .and("estado").is(EstadoPedido.ACEPTADO.name()));
             pedidoDB = mongoTemplate.findOne(query, PedidoDB.class, COLLECTION_NAME);
-            if (pedidoDB == null){
+            if (pedidoDB == null) {
                 log.info("El repartidor no tiene ningún pedido aceptado");
             }
         } catch (Exception e) {
@@ -169,10 +186,13 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
         return pedidoDB;
     }
 
-    public void inicializarPedidos() {
+    @Override
+    public List<PedidoDB> getPedidosRepartidos(String correoRepartidor) {
+        List<PedidoDB> pedidos = new ArrayList<>();
         try {
-            List<PedidoDB> pedidos = new ArrayList<>();
+
             Query query = new Query();
+            query.addCriteria(Criteria.where("repartidor").is(correoRepartidor));
             pedidos = mongoTemplate.find(query, PedidoDB.class, COLLECTION_NAME);
 
             pedidos.forEach(pedido -> {
@@ -181,9 +201,26 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
                 }
             });
         } catch (Exception e) {
-            log.error("Error al inicializar pedidos: {}", e.getMessage(), e);
+            log.error("Error al obtener pedidos por correo: {}", e.getMessage(), e);
 
         }
+        return pedidos;
+    }
+
+    @Override
+    public String entregarPedido(int idPedido, String correoRepartidor) {
+        try {
+            MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
+            collection.updateOne(
+                    eq("_id", pedidoIdManager.getPedidoObjectId(idPedido)),
+                    set("estado", EstadoPedido.ENTREGADO)
+            );
+            log.info("Pedido " + idPedido + " entregado por " + correoRepartidor);
+        } catch (Exception e) {
+            log.error("Error actualizando pedido: {}", e.getMessage(), e);
+            return ConstantesErrores.ERROR_ENTREGANDO_PEDIDO;
+        }
+        return Constantes.PEDIDO_ENTREGADO;
     }
 }
 

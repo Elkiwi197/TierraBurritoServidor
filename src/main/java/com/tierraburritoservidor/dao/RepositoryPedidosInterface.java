@@ -14,7 +14,11 @@ public interface RepositoryPedidosInterface {
 
     String aceptarPedido(int idPedido, String correoRepartidor);
 
-    String cancelarPedido(int idPedido, String correo);
+    String cancelarPedido(int idPedido, String correoRepartidor);
 
     PedidoDB getPedidoAceptado(String correoRepartidor);
+
+    List<PedidoDB> getPedidosRepartidos(String correoRepartidor);
+
+    String entregarPedido(int idPedido, String correoRepartidor);
 }

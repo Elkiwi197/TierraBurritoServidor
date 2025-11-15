@@ -39,12 +39,22 @@ public class PedidosRestController {
     }
 
     @PostMapping("/cancelarPedido")
-    public String cancelarPedido(@RequestParam int idPedido, @RequestParam String correo){
-        return servicePedidos.cancelarPedido(idPedido, correo);
+    public String cancelarPedido(@RequestParam int idPedido, @RequestParam String correoRepartidor){
+        return servicePedidos.cancelarPedido(idPedido, correoRepartidor);
+    }
+
+    @PostMapping("/entregarPedido")
+    public String entregarPedido(@RequestParam int idPedido, @RequestParam String correoRepartidor){
+        return servicePedidos.entregarPedido(idPedido, correoRepartidor);
     }
 
     @GetMapping("/aceptado/{correoRepartidor}")
     public Pedido getPedidoAceptado(@PathVariable String correoRepartidor) {
         return servicePedidos.getPedidoAceptado(correoRepartidor);
+    }
+
+    @GetMapping("/repartidos/{correoRepartidor}")
+    public List<Pedido> getPedidosRepartidos(@PathVariable String correoRepartidor) {
+        return servicePedidos.getPedidosRepartidos(correoRepartidor);
     }
 }

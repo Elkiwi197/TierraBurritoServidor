@@ -2,11 +2,9 @@ package com.tierraburritoservidor.filters;
 
 import com.tierraburritoservidor.common.Constantes;
 import com.tierraburritoservidor.common.ConstantesErrores;
-import com.tierraburritoservidor.config.ConfigurationBeans;
 import com.tierraburritoservidor.config.auth.ConfigurationTokens;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +36,6 @@ public class TokenFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
 
         try {
-            //todo comprobar este metodo
             if (!configurationTokens.validarToken(token)) {
                 log.error(ConstantesErrores.ERROR_VALIDAR_TOKEN);
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ConstantesErrores.TOKEN_INVALIDO_O_EXPIRADO);
@@ -67,7 +64,7 @@ public class TokenFilter extends OncePerRequestFilter {
                 || path.contains("/login")
                 || path.contains("/favicon")
                 || path.contains("/auth/refresh")
-                || path.contains("/")
+                //   || path.contains("/")
                 ;
     }
 }

@@ -97,8 +97,8 @@ public class ServicePedidos {
         return repositoryPedidos.aceptarPedido(idPedido, correoRepartidor);
     }
 
-    public String cancelarPedido(int idPedido, String correo) {
-        return repositoryPedidos.cancelarPedido(idPedido, correo);
+    public String cancelarPedido(int idPedido, String correoRepartidor) {
+        return repositoryPedidos.cancelarPedido(idPedido, correoRepartidor);
     }
 
     public Pedido getPedidoAceptado(String correoRepartidor) {
@@ -130,4 +130,40 @@ public class ServicePedidos {
             return null;
         }
     }
+
+    public List<Pedido> getPedidosRepartidos(String correoRepartidor) {
+        repositoryProductos.getIngredientes();
+        List<PedidoDB> pedidosDB = repositoryPedidos.getPedidosRepartidos(correoRepartidor);
+        if (pedidosDB.isEmpty()) {
+            throw new PedidosNoEncontradoException();
+        }
+        List<Pedido> pedidos = new ArrayList<>();
+        pedidosDB.forEach(pedidoDB -> {
+            Pedido pedido = databaseUiParser.pedidoDBtoPedido(pedidoDB);
+            pedido.getPlatos().clear();
+            pedidoDB.getPlatos().forEach(platoDB -> {
+                Plato plato = new Plato();
+                List<Producto> ingredientes = new ArrayList<>();
+                platoDB.getIngredientes().forEach(objectId ->
+                        ingredientes.add(databaseUiParser.productoDBtoProducto(repositoryProductos.getProductoByObjectId(objectId))));
+                plato = databaseUiParser.platoDBtoPlato(platoDB);
+                plato.setIngredientes(ingredientes);
+                pedido.getPlatos().add(plato);
+            });
+            pedidos.add(pedido);
+        });
+        pedidos.forEach(pedido -> pedido.getPlatos()
+                .forEach(plato -> {
+                    List<Producto> ingredientes = new ArrayList<>();
+                    plato.getIngredientes()
+                            .forEach(ingrediente -> ingredientes.add(databaseUiParser.productoDBtoProducto(repositoryProductos.getProductoByNombre(ingrediente.getNombre()))));
+                    plato.setIngredientes(ingredientes);
+                }));
+        return pedidos;
+    }
+
+    public String entregarPedido(int idPedido, String correoRepartidor) {
+        return repositoryPedidos.entregarPedido(idPedido, correoRepartidor);
+    }
 }
+
