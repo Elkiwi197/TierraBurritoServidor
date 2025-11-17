@@ -1,6 +1,6 @@
 package com.tierraburritoservidor.ui.controllers;
 
-import com.tierraburritoservidor.common.Constantes;
+import com.tierraburritoservidor.common.ConstantesInfo;
 import com.tierraburritoservidor.domain.model.TipoUsuario;
 import com.tierraburritoservidor.domain.model.Usuario;
 import com.tierraburritoservidor.domain.service.ServiceUsuarios;
@@ -24,7 +24,7 @@ public class SignUpRestController {
         String codigo = serviceUsuarios.crearUsuarioDesactivado(usuario);
         int id = serviceUsuarios.getUsuarioByCorreo(usuario.getCorreo()).getId();
         mailComponent.mandarCorreoActivacion(usuario.getCorreo(), id, codigo);
-        return ResponseEntity.status(HttpServletResponse.SC_CREATED).body(Constantes.USUARIO_CREADO);
+        return ResponseEntity.status(HttpServletResponse.SC_CREATED).body(ConstantesInfo.USUARIO_CREADO);
     }
 
     @PostMapping("/repartidor")
@@ -39,6 +39,6 @@ public class SignUpRestController {
     @GetMapping("/activar/{id}")
     public ResponseEntity<String> activarUsuario(@PathVariable int id, @RequestParam String codigo) {
         serviceUsuarios.activarUsuario(id, codigo);
-        return ResponseEntity.status(HttpServletResponse.SC_CREATED).body(Constantes.USUARIO_ACTIVADO);
+        return ResponseEntity.status(HttpServletResponse.SC_CREATED).body(ConstantesInfo.USUARIO_ACTIVADO);
     }
 }

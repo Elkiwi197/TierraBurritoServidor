@@ -1,9 +1,9 @@
 package com.tierraburritoservidor.errors.exceptions;
 
-import com.tierraburritoservidor.common.ConstantesErrores;
+import com.tierraburritoservidor.common.ConstantesInfo;
 
 public class CorreoYaExisteException  extends RuntimeException{
     public CorreoYaExisteException() {
-        super(ConstantesErrores.CORREO_YA_EXISTE);
+        super(ConstantesInfo.CORREO_YA_EXISTE);
     }
 }

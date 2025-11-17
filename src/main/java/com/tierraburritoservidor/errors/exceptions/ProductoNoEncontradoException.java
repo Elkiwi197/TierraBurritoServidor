@@ -1,9 +1,9 @@
 package com.tierraburritoservidor.errors.exceptions;
 
-import com.tierraburritoservidor.common.ConstantesErrores;
+import com.tierraburritoservidor.common.ConstantesInfo;
 
 public class ProductoNoEncontradoException  extends RuntimeException {
     public ProductoNoEncontradoException() {
-        super(ConstantesErrores.PRODUCTO_NO_ENCONTRADO);
+        super(ConstantesInfo.PRODUCTO_NO_ENCONTRADO);
     }
 }

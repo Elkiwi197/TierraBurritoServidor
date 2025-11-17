@@ -4,9 +4,9 @@ package com.tierraburritoservidor.dao.repositories;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.tierraburritoservidor.common.ConstantesErrores;
+import com.tierraburritoservidor.common.Constantes;
+import com.tierraburritoservidor.common.ConstantesInfo;
 import com.tierraburritoservidor.dao.RepositoryProductosInterface;
 import com.tierraburritoservidor.dao.model.ProductoDB;
 import com.tierraburritoservidor.dao.util.DocumentPojoParser;
@@ -29,7 +29,7 @@ import java.util.List;
 public class RepositoryProductos implements RepositoryProductosInterface {
 
 
-    private final String COLLECTION_NAME = "Productos";
+    private final String COLLECTION_NAME = Constantes.PRODUCTOS;
 
     private final DocumentPojoParser documentPojoParser;
     private final ProductoIdManager productoIdManager;
@@ -48,11 +48,11 @@ public class RepositoryProductos implements RepositoryProductosInterface {
             HashMap<ObjectId, Integer> newIds = new HashMap<>();
             documents.forEach(document -> {
                 productos.add(documentPojoParser.documentToProductoDB(document));
-                newIds.put(document.getObjectId("_id"), newIds.size() + 1);
+                newIds.put(document.getObjectId(Constantes._ID), newIds.size() + 1);
             });
             productoIdManager.setProductoIds(newIds);
         } catch (Exception e) {
-            log.error( ConstantesErrores.ERROR_LEYENDO_PRODUCTOS, e.getMessage(), e);
+            log.error( ConstantesInfo.ERROR_LEYENDO_PRODUCTOS, e.getMessage(), e);
         }
         return productos;
     }
@@ -64,7 +64,7 @@ public class RepositoryProductos implements RepositoryProductosInterface {
         try {
             MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
 
-            Document document = collection.find(Filters.eq("nombre", nombre)).first();
+            Document document = collection.find(Filters.eq(Constantes.NOMBRE, nombre)).first();
             if (document != null) {
                 producto = documentPojoParser.documentToProductoDB(document);
             } else {
@@ -72,7 +72,7 @@ public class RepositoryProductos implements RepositoryProductosInterface {
             }
 
         } catch (Exception e) {
-            log.error("Error al obtener el producto por id: {}", e.getMessage(), e);
+            log.error(ConstantesInfo.ERROR_LEYENDO_PRODUCTO_POR_NOMBRE, e.getMessage(), e);
 
         }
         return producto;
@@ -84,7 +84,7 @@ public class RepositoryProductos implements RepositoryProductosInterface {
         try {
             MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
 
-            Document document = collection.find(Filters.eq("_id", objectId)).first();
+            Document document = collection.find(Filters.eq(Constantes._ID, objectId)).first();
             if (document != null) {
                 producto = documentPojoParser.documentToProductoDB(document);
             } else {
@@ -92,7 +92,7 @@ public class RepositoryProductos implements RepositoryProductosInterface {
             }
 
         } catch (Exception e) {
-            log.error("Error al obtener el producto por id: {}", e.getMessage(), e);
+            log.error(ConstantesInfo.ERROR_LEYENDO_PRODUCTO_POR_ID, e.getMessage(), e);
 
         }
         return producto;

@@ -1,7 +1,7 @@
 package com.tierraburritoservidor.ui.controllers;
 
 
-import com.tierraburritoservidor.common.ConstantesErrores;
+import com.tierraburritoservidor.common.ConstantesInfo;
 import com.tierraburritoservidor.config.auth.AuthenticationResponse;
 import com.tierraburritoservidor.config.auth.ConfigurationTokens;
 import com.tierraburritoservidor.domain.model.TipoUsuario;
@@ -40,12 +40,12 @@ public class LoginRestController {
     @PostMapping("auth/refresh")
     public AuthenticationResponse refresh(@RequestBody String refreshToken) {
         if (!configurationTokens.validarToken(refreshToken)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, ConstantesErrores.TOKEN_INVALIDO);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, ConstantesInfo.TOKEN_INVALIDO);
         }
         String correoUsuario = configurationTokens.getCorreo(refreshToken);
    //     TipoUsuario tipoUsuario = serviceUsuarios.getUsuarioByCorreo(correoUsuario).getTipoUsuario();
         String newAccessToken = configurationTokens.crearToken(correoUsuario, 120000);
-        log.info("Token renovado a " + correoUsuario);
+        log.info(ConstantesInfo.TOKEN_RENOVADO_A + correoUsuario);
         return AuthenticationResponse.builder()
                 .accessToken(newAccessToken)
 //esto no deberia hacer falta        .tfipoUsuario(tipoUsuario)

@@ -1,9 +1,9 @@
 package com.tierraburritoservidor.errors.exceptions;
 
-import com.tierraburritoservidor.common.ConstantesErrores;
+import com.tierraburritoservidor.common.ConstantesInfo;
 
 public class CodigoActivacionIncorrectoException extends RuntimeException {
     public CodigoActivacionIncorrectoException(){
-        super(ConstantesErrores.CODIGO_ACTIVACION_INCORRECTO);
+        super(ConstantesInfo.CODIGO_ACTIVACION_INCORRECTO);
     }
 }

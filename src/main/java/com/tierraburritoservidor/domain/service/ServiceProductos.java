@@ -34,7 +34,6 @@ public class ServiceProductos {
             throw new ProductoNoEncontradoException();
         }
         return databaseUiParser.productoDBtoProducto(productoDB);
-        //todo parsear
     }
 
     public List<Producto> getIngredientesByPlato(Plato plato) {
@@ -52,6 +51,7 @@ public class ServiceProductos {
                 extras.add(databaseUiParser.productoDBtoProducto(i));
                 // Llama 20 veces a la BBDD, pero si la linea de arriba falla se pone
                 // extras.add(getProductoByNombre(i.getNombre()));
+                //todo este metodo no funciona muy bien
             }
         });
         return extras;

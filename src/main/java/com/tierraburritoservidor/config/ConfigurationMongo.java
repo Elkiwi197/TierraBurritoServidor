@@ -3,6 +3,7 @@ package com.tierraburritoservidor.config;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import com.tierraburritoservidor.common.Constantes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -17,7 +18,7 @@ public class ConfigurationMongo {
 
     @Bean
     public MongoTemplate mongoTemplate(MongoClient mongoClient) {
-        return new MongoTemplate(mongoClient, "TierraBurrito");
+        return new MongoTemplate(mongoClient, Constantes.TIERRA_BURRITO);
     }
 }
 

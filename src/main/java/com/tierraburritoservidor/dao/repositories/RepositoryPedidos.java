@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mongodb.client.MongoCollection;
 import com.tierraburritoservidor.common.Constantes;
-import com.tierraburritoservidor.common.ConstantesErrores;
+import com.tierraburritoservidor.common.ConstantesInfo;
 import com.tierraburritoservidor.dao.RepositoryPedidosInterface;
 import com.tierraburritoservidor.dao.model.PedidoDB;
 import com.tierraburritoservidor.dao.util.DocumentPojoParser;
@@ -53,8 +53,7 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
                 }
             });
         } catch (Exception e) {
-            log.error("Error al inicializar pedidos: {}", e.getMessage(), e);
-
+            log.error(ConstantesInfo.ERROR_INICIALIZANDO_PEDIDOS, e.getMessage(), e);
         }
     }
 
@@ -65,14 +64,14 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
             pedido.setEstado(EstadoPedido.EN_PREPARACION.name());
             Document pedidoDocument = (Document) mongoTemplate.getConverter().convertToMongoType(pedido); //todo mapear asi los objetos
             collection.insertOne(pedidoDocument);
-            ObjectId generatedObjectId = pedidoDocument.getObjectId("_id");
+            ObjectId generatedObjectId = pedidoDocument.getObjectId(Constantes._ID);
             pedidoIdManager.anadirPedidoObjectId(generatedObjectId);
-            log.info("Pedido añadido: " + pedidoIdManager.getPedidoId(pedido.get_id()) + ", " + pedido.get_id());
+            log.info(ConstantesInfo.PEDIDO_ANADIDO_ + pedidoIdManager.getPedidoId(pedido.get_id()) + ", " + pedido.get_id());
         } catch (Exception e) {
-            log.error(ConstantesErrores.ERROR_CREANDO_PEDIDO, e.getMessage(), e);
-            throw new RuntimeException(ConstantesErrores.ERROR_CREANDO_PEDIDO);
+            log.error(ConstantesInfo.ERROR_CREANDO_PEDIDO, e.getMessage(), e);
+            throw new RuntimeException(ConstantesInfo.ERROR_CREANDO_PEDIDO);
         }
-        return Constantes.PEDIDO_HECHO;
+        return ConstantesInfo.PEDIDO_HECHO;
     }
 
 
@@ -81,7 +80,7 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
         try {
 
             Query query = new Query();
-            query.addCriteria(Criteria.where("correoCliente").is(correoCliente));
+            query.addCriteria(Criteria.where(Constantes.CORREO_CLIENTE).is(correoCliente));
             pedidos = mongoTemplate.find(query, PedidoDB.class, COLLECTION_NAME);
 
             pedidos.forEach(pedido -> {
@@ -90,7 +89,7 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
                 }
             });
         } catch (Exception e) {
-            log.error("Error al obtener pedidos por correo: {}", e.getMessage(), e);
+            log.error(ConstantesInfo.ERROR_LEYENDO_PEDIDOS_DE_CLIENTE, e.getMessage(), e);
 
         }
         return pedidos;
@@ -102,7 +101,7 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
         try {
 
             Query query = new Query();
-            query.addCriteria(Criteria.where("estado").is(EstadoPedido.EN_PREPARACION.toString()));
+            query.addCriteria(Criteria.where(Constantes.ESTADO).is(EstadoPedido.EN_PREPARACION.toString()));
             pedidos = mongoTemplate.find(query, PedidoDB.class, COLLECTION_NAME);
 
             pedidos.forEach(pedido -> {
@@ -111,7 +110,7 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
                 }
             });
         } catch (Exception e) {
-            log.error("Error al obtener pedidos por correo: {}", e.getMessage(), e);
+            log.error(ConstantesInfo.ERROR_LEYENDO_PEDIDOS_EN_PREPARACION, e.getMessage(), e);
 
         }
         return pedidos;
@@ -123,8 +122,8 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
 
             Query query = new Query();
             query.addCriteria(
-                    Criteria.where("repartidor").is(correoRepartidor)
-                            .and("estado").in(
+                    Criteria.where(Constantes.REPARTIDOR).is(correoRepartidor)
+                            .and(Constantes.ESTADO).in(
                                     EstadoPedido.ACEPTADO.toString(),
                                     EstadoPedido.EN_REPARTO.toString()
                             )
@@ -135,22 +134,22 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
             if (pedidos.isEmpty()) {
                 MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
                 collection.updateOne(
-                        eq("_id", pedidoIdManager.getPedidoObjectId(idPedido)),
-                        set("estado", EstadoPedido.ACEPTADO)
+                        eq(Constantes._ID, pedidoIdManager.getPedidoObjectId(idPedido)),
+                        set(Constantes.ESTADO, EstadoPedido.ACEPTADO)
                 );
                 collection.updateOne(
-                        eq("_id", pedidoIdManager.getPedidoObjectId(idPedido)),
-                        set("repartidor", correoRepartidor)
+                        eq(Constantes._ID, pedidoIdManager.getPedidoObjectId(idPedido)),
+                        set(Constantes.REPARTIDOR, correoRepartidor)
                 );
-                log.info("Pedido aceptado por " + correoRepartidor);
+                log.info(ConstantesInfo.PEDIDO_ACEPTADO_POR + correoRepartidor);
             } else {
-                return Constantes.NO_PUEDES_ACEPTAR_VARIOS_PEDIDOS_A_LA_VEZ;
+                return ConstantesInfo.NO_PUEDES_ACEPTAR_VARIOS_PEDIDOS_A_LA_VEZ;
             }
         } catch (Exception e) {
-            log.error("Error actualizando pedido: {}", e.getMessage(), e);
-            return ConstantesErrores.ERROR_ACEPTANDO_PEDIDO;
+            log.error(ConstantesInfo.ERROR_ACEPTANDO_PEDIDO_, e.getMessage(), e);
+            return ConstantesInfo.ERROR_ACEPTANDO_PEDIDO;
         }
-        return Constantes.PEDIDO_ACEPTADO;
+        return ConstantesInfo.PEDIDO_ACEPTADO;
     }
 
     @Override
@@ -158,15 +157,15 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
         try {
             MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
             collection.updateOne(
-                    eq("_id", pedidoIdManager.getPedidoObjectId(idPedido)),
-                    set("estado", EstadoPedido.CANCELADO)
+                    eq(Constantes._ID, pedidoIdManager.getPedidoObjectId(idPedido)),
+                    set(Constantes.ESTADO, EstadoPedido.CANCELADO)
             );
-            log.info("Pedido " + idPedido + " cancelado por " + correoRepartidor);
+            log.info(Constantes.PEDIDO + " " + idPedido + ConstantesInfo.CANCELADO_POR + correoRepartidor);
         } catch (Exception e) {
-            log.error("Error actualizando pedido: {}", e.getMessage(), e);
-            return ConstantesErrores.ERROR_CANCELANDO_PEDIDO;
+            log.error(ConstantesInfo.ERROR_CANCELANDO_PEDIDO_, e.getMessage(), e);
+            return ConstantesInfo.ERROR_CANCELANDO_PEDIDO;
         }
-        return Constantes.PEDIDO_CANCELADO;
+        return ConstantesInfo.PEDIDO_CANCELADO;
     }
 
     @Override
@@ -174,14 +173,14 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
         PedidoDB pedidoDB = null;
         try {
             Query query = new Query();
-            query.addCriteria(Criteria.where("repartidor").is(correoRepartidor)
-                    .and("estado").is(EstadoPedido.ACEPTADO.name()));
+            query.addCriteria(Criteria.where(Constantes.REPARTIDOR).is(correoRepartidor)
+                    .and(Constantes.ESTADO).is(EstadoPedido.ACEPTADO.name()));
             pedidoDB = mongoTemplate.findOne(query, PedidoDB.class, COLLECTION_NAME);
             if (pedidoDB == null) {
-                log.info("El repartidor no tiene ningún pedido aceptado");
+                log.info(ConstantesInfo.REPARTIDOR_SIN_PEDIDOS_ACEPTADOS);
             }
         } catch (Exception e) {
-            log.error("Error al obtener pedido aceptado: {}", e.getMessage(), e);
+            log.error(ConstantesInfo.ERROR_LEYENDO_PEDIDO_ACEPTADO, e.getMessage(), e);
         }
         return pedidoDB;
     }
@@ -192,7 +191,7 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
         try {
 
             Query query = new Query();
-            query.addCriteria(Criteria.where("repartidor").is(correoRepartidor));
+            query.addCriteria(Criteria.where(Constantes.REPARTIDOR).is(correoRepartidor));
             pedidos = mongoTemplate.find(query, PedidoDB.class, COLLECTION_NAME);
 
             pedidos.forEach(pedido -> {
@@ -201,7 +200,7 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
                 }
             });
         } catch (Exception e) {
-            log.error("Error al obtener pedidos por correo: {}", e.getMessage(), e);
+            log.error(ConstantesInfo.ERROR_LEYENDO_PEDIDOS_DE_REPARTIDOR, e.getMessage(), e);
 
         }
         return pedidos;
@@ -212,15 +211,15 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
         try {
             MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
             collection.updateOne(
-                    eq("_id", pedidoIdManager.getPedidoObjectId(idPedido)),
-                    set("estado", EstadoPedido.ENTREGADO)
+                    eq(Constantes._ID, pedidoIdManager.getPedidoObjectId(idPedido)),
+                    set(Constantes.ESTADO, EstadoPedido.ENTREGADO)
             );
-            log.info("Pedido " + idPedido + " entregado por " + correoRepartidor);
+            log.info(Constantes.PEDIDO + " " + idPedido + ConstantesInfo.ENTREGADO_POR + correoRepartidor);
         } catch (Exception e) {
-            log.error("Error actualizando pedido: {}", e.getMessage(), e);
-            return ConstantesErrores.ERROR_ENTREGANDO_PEDIDO;
+            log.error(ConstantesInfo.ERROR_ENTREGANDO_PEDIDO_, e.getMessage(), e);
+            return ConstantesInfo.ERROR_ENTREGANDO_PEDIDO;
         }
-        return Constantes.PEDIDO_ENTREGADO;
+        return ConstantesInfo.PEDIDO_ENTREGADO;
     }
 }
 

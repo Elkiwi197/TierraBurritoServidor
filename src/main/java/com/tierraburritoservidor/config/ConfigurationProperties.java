@@ -1,5 +1,6 @@
 package com.tierraburritoservidor.config;
 
+import com.tierraburritoservidor.common.Constantes;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Configuration;
@@ -29,8 +30,8 @@ public class ConfigurationProperties {
         try {
             Properties p = new Properties();
             p.load(getClass().getClassLoader()
-                    .getResourceAsStream("application.properties"));
-            this.clave = p.getProperty("clave");
+                    .getResourceAsStream(Constantes.APPLICATION_PROPERTIES));
+            this.clave = p.getProperty(Constantes.CLAVE);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }

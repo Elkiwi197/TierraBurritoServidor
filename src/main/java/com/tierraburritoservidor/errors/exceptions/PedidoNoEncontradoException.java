@@ -1,9 +1,9 @@
 package com.tierraburritoservidor.errors.exceptions;
 
-import com.tierraburritoservidor.common.ConstantesErrores;
+import com.tierraburritoservidor.common.ConstantesInfo;
 
 public class PedidoNoEncontradoException extends RuntimeException {
     public PedidoNoEncontradoException() {
-        super(ConstantesErrores.PEDIDO_NO_ENCONTRADO);
+        super(ConstantesInfo.PEDIDO_NO_ENCONTRADO);
     }
 }

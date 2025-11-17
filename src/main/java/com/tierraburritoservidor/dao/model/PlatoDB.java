@@ -1,5 +1,6 @@
 package com.tierraburritoservidor.dao.model;
 
+import com.tierraburritoservidor.common.Constantes;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "Platos")
+@Document(collection = Constantes.PLATOS)
 public class PlatoDB {
     @Id
     private ObjectId _id;

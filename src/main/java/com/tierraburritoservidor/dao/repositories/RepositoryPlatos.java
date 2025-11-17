@@ -4,7 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
-import com.tierraburritoservidor.common.ConstantesErrores;
+import com.tierraburritoservidor.common.Constantes;
+import com.tierraburritoservidor.common.ConstantesInfo;
 import com.tierraburritoservidor.dao.RepositoryPlatosInterface;
 import com.tierraburritoservidor.dao.model.PlatoDB;
 import com.tierraburritoservidor.dao.util.DocumentPojoParser;
@@ -27,7 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RepositoryPlatos implements RepositoryPlatosInterface {
 
-    private final String COLLECTION_NAME = "Platos";
+    private final String COLLECTION_NAME = Constantes.PLATOS;
 
     private final DocumentPojoParser documentPojoParser;
     private final PlatoIdManager platoIdManager;
@@ -46,8 +47,8 @@ public class RepositoryPlatos implements RepositoryPlatosInterface {
             HashMap<ObjectId, Integer> newProductoIds = new HashMap<>();
             documents.forEach(document -> {
                 PlatoDB plato = documentPojoParser.documentToPlatoDB(document);
-                newPlatoIds.put(document.getObjectId("_id"), newPlatoIds.size() + 1);
-                List<ObjectId> idsIngredientesReales = document.getList("ingredientes", ObjectId.class);
+                newPlatoIds.put(document.getObjectId(Constantes._ID), newPlatoIds.size() + 1);
+                List<ObjectId> idsIngredientesReales = document.getList(Constantes.INGREDIENTES, ObjectId.class);
                 idsIngredientesReales.forEach(objectId -> {
                     if (!newProductoIds.containsKey(objectId)) {
                         newProductoIds.put(objectId, newProductoIds.size() + 1);
@@ -63,7 +64,7 @@ public class RepositoryPlatos implements RepositoryPlatosInterface {
             //platoDB.set_id(document.getObjectId("_id"));
 
         } catch (Exception e) {
-            log.error(ConstantesErrores.ERROR_LEYENDO_PLATOS, e.getMessage(), e);
+            log.error(ConstantesInfo.ERROR_LEYENDO_PLATOS, e.getMessage(), e);
         }
         return platos;
     }
@@ -74,7 +75,7 @@ public class RepositoryPlatos implements RepositoryPlatosInterface {
         try {
             MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
 
-            Document document = collection.find(Filters.eq("_id", id)).first();
+            Document document = collection.find(Filters.eq(Constantes._ID, id)).first();
             if (document != null) {
                 plato = documentPojoParser.documentToPlatoDB(document);
                 plato.getIngredientes().forEach(i -> {
@@ -86,7 +87,7 @@ public class RepositoryPlatos implements RepositoryPlatosInterface {
                 throw new PlatoNoEncontradoException();
             }
         } catch (Exception e) {
-            log.error("Error al obtener el plato por id: {}", e.getMessage(), e);
+            log.error(ConstantesInfo.ERROR_LEYENDO_PLATO_POR_ID, e.getMessage(), e);
 
         }
         return plato;

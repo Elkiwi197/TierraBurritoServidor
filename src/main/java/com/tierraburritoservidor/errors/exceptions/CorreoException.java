@@ -1,9 +1,9 @@
 package com.tierraburritoservidor.errors.exceptions;
 
-import com.tierraburritoservidor.common.ConstantesErrores;
+import com.tierraburritoservidor.common.ConstantesInfo;
 
 public class CorreoException extends RuntimeException{
     public CorreoException() {
-        super(ConstantesErrores.NO_SE_PUDO_MANDAR_CORREO);
+        super(ConstantesInfo.NO_SE_PUDO_MANDAR_CORREO);
     }
 }

@@ -1,7 +1,7 @@
 package com.tierraburritoservidor.filters;
 
 import com.tierraburritoservidor.common.Constantes;
-import com.tierraburritoservidor.common.ConstantesErrores;
+import com.tierraburritoservidor.common.ConstantesInfo;
 import com.tierraburritoservidor.config.auth.ConfigurationTokens;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -28,8 +28,8 @@ public class TokenFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader(Constantes.AUTHORIZATION_HEADER);
         if (authHeader == null || !authHeader.startsWith(Constantes.BEARER)) {
-            log.warn(ConstantesErrores.TOKEN_NO_PROPORCIONADO);
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ConstantesErrores.TOKEN_NO_PROPORCIONADO);
+            log.warn(ConstantesInfo.TOKEN_NO_PROPORCIONADO);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ConstantesInfo.TOKEN_NO_PROPORCIONADO);
             return;
         }
 
@@ -37,21 +37,21 @@ public class TokenFilter extends OncePerRequestFilter {
 
         try {
             if (!configurationTokens.validarToken(token)) {
-                log.error(ConstantesErrores.ERROR_VALIDAR_TOKEN);
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ConstantesErrores.TOKEN_INVALIDO_O_EXPIRADO);
+                log.error(ConstantesInfo.ERROR_VALIDANDO_TOKEN);
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ConstantesInfo.TOKEN_INVALIDO_O_EXPIRADO);
                 return;
             }
 
             String correo = configurationTokens.getCorreo(token);
-            log.info(Constantes.USUARIO_AUTENTICADO, correo);
+            log.info(ConstantesInfo.USUARIO_AUTENTICADO, correo);
 
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
-            log.warn("Token expirado: {}", e.getMessage());
+            log.warn(ConstantesInfo.TOKEN_EXPIRADO, e.getMessage());
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
         } catch (Exception e) {
-            log.error("Error inesperado al validar token: {}", e.getMessage(), e);
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ConstantesErrores.TOKEN_INVALIDO_O_EXPIRADO);
+            log.error(ConstantesInfo.ERROR_VALIDANDO_TOKEN, e.getMessage(), e);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ConstantesInfo.TOKEN_INVALIDO_O_EXPIRADO);
         }
 
     }

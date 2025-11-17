@@ -1,5 +1,6 @@
 package com.tierraburritoservidor.dao.model;
 
+import com.tierraburritoservidor.common.Constantes;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "Usuarios")
+@Document(collection = Constantes.USUARIOS)
 public class UsuarioDB {
     @Id
     private ObjectId _id;
