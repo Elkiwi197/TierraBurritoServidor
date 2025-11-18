@@ -101,7 +101,7 @@ public class RepositoryUsuarios implements RepositoryUsuariosInterface {
                 throw new UsuarioNoEncontradoException();
             }
         } catch (UsuarioNoEncontradoException e) {
-            log.warn(ConstantesInfo.ERROR_LEYENDO_USUARIOS, e.getMessage(), e);
+            log.warn(e.getMessage());
             return null;
         } catch (Exception e) {
             log.error(ConstantesInfo.ERROR_LEYENDO_USUARIOS, e.getMessage(), e);

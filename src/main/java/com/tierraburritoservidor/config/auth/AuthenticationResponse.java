@@ -22,4 +22,5 @@ public class AuthenticationResponse {
 
     @JsonProperty("tipo_usuario")
     private TipoUsuario tipoUsuario;
+
 }

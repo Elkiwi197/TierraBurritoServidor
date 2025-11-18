@@ -6,6 +6,7 @@ import com.tierraburritoservidor.domain.model.Usuario;
 import com.tierraburritoservidor.domain.util.DatabaseUiParser;
 import com.tierraburritoservidor.errors.exceptions.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -17,6 +18,7 @@ public class ServiceUsuarios {
 
     private final RepositoryUsuarios repositoryUsuarios;
     private final DatabaseUiParser databaseUiParser;
+    private final PasswordEncoder passwordEncoder;
 
     public void comprobarCredenciales(String correo, String contrasena) {
         repositoryUsuarios.cargarIdsUsuarios();
@@ -25,9 +27,11 @@ public class ServiceUsuarios {
             if (!usuarioDB.isActivado()) {
                 throw new UsuarioNoActivadoException();
             }
-            if (!usuarioDB.getContrasena().equals(contrasena)) {
-                throw new UsuarioContrasenaIncorrectosException();
+            if (!passwordEncoder.matches(contrasena, usuarioDB.getContrasena())){
+                throw new ContrasenaIncorrectaException();
             }
+        } else {
+            throw new UsuarioNoEncontradoException();
         }
     }
 
@@ -41,6 +45,7 @@ public class ServiceUsuarios {
                 .noneMatch(u -> u.getCorreo().equals(usuario.getCorreo()))) {
             usuario.setActivado(false);
             usuario.setCodigoActivacion(codigo);
+            usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
             repositoryUsuarios.crearUsuarioDesactivado(databaseUiParser.usuarioToUsuarioDb(usuario));
             return codigo;
         } else {

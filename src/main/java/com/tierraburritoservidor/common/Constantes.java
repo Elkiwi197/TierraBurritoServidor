@@ -22,6 +22,8 @@ public class Constantes {
     public static final String CORREO = "correo";
     public static final String ACTIVADO = "activado";
     public static final String PLATOS_MIN = "platos";
+    public static final String SHA_512 = "SHA-512";
+
     private Constantes() {
     }
 }

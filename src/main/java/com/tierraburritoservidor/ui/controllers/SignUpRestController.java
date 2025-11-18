@@ -27,13 +27,14 @@ public class SignUpRestController {
         return ResponseEntity.status(HttpServletResponse.SC_CREATED).body(ConstantesInfo.USUARIO_CREADO);
     }
 
+
     @PostMapping("/repartidor")
-    public ResponseEntity<Integer> signUpRepartidor(@RequestBody Usuario usuario) {
+    public ResponseEntity<String> signUpRepartidor(@RequestBody Usuario usuario) {
         usuario.setTipoUsuario(TipoUsuario.REPARTIDOR);
         String codigo = serviceUsuarios.crearUsuarioDesactivado(usuario);
         int id = serviceUsuarios.getUsuarioByCorreo(usuario.getCorreo()).getId();
         mailComponent.mandarCorreoActivacion(usuario.getCorreo(), id, codigo);
-        return ResponseEntity.status(HttpServletResponse.SC_CREATED).body(id);
+        return ResponseEntity.status(HttpServletResponse.SC_CREATED).body(ConstantesInfo.USUARIO_CREADO);
     }
 
     @GetMapping("/activar/{id}")
