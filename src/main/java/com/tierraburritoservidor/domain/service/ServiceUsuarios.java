@@ -69,6 +69,7 @@ public class ServiceUsuarios {
     }
 
     public Usuario getUsuarioByCorreo(String correo) {
+        repositoryUsuarios.getUsuariosActivados();
         UsuarioDB usuarioDB = repositoryUsuarios.getUsuarioByCorreo(correo);
         if (usuarioDB != null) {
             return databaseUiParser.usuarioDbToUsuario(usuarioDB);

@@ -1,33 +1,28 @@
 package com.tierraburritoservidor.common;
 
 public class ConstantesInfo {
-    public static final String ERROR_INICIALIZANDO_PEDIDOS = "Error inicializando pedidos: {}";
-    public static final String ERROR_LEYENDO_PEDIDOS_DE_CLIENTE = "Error obteniendo pedidos por cliente: {}";
-    public static final String ERROR_LEYENDO_PEDIDOS_EN_PREPARACION = "Error obteniendo pedidos en preparación: {}";
-    public static final String ERROR_ACEPTANDO_PEDIDO_ = "Error aceptando pedido: {}";
-    public static final String ERROR_CANCELANDO_PEDIDO_ = "Error actualizando pedido: {}";
-    public static final String ERROR_LEYENDO_PEDIDO_ACEPTADO = "Error obteniendo pedido aceptado: {}";
-    public static final String ERROR_LEYENDO_PEDIDOS_DE_REPARTIDOR = "Error obteniendo pedidos por repartidor: {}";
-    public static final String ERROR_ENTREGANDO_PEDIDO_ = "Error entregando pedido: {}";
-    public static final String ERROR_LEYENDO_PLATO_POR_ID = "Error obteniendo plato por id: {}";
-    public static final String ERROR_LEYENDO_PRODUCTO_POR_ID = "Error obteniendo producto por id: {}";
-    public static final String ERROR_LEYENDO_PRODUCTO_POR_NOMBRE = "Error obteniendo producto por nombre: {}";
-    public static final String ERROR_ACTIVANDO_USUARIO = "Error activando usuario: {}";
-    public static final String ERROR_LEYENDO_USUARIO_POR_ID = "Error obteniendo usuario por ID: {}";
-    public static final String TOKEN_EXPIRADO = "Token expirado: {}";
-    public static final String TOKEN_RENOVADO_A = "Token renovado a ";
+    public static final String ERROR_INICIALIZANDO_PEDIDOS = "Error inicializando pedidos:";
+    public static final String ERROR_LEYENDO_PEDIDOS_DE_CLIENTE = "Error obteniendo pedidos por cliente:";
+    public static final String ERROR_LEYENDO_PEDIDOS_EN_PREPARACION = "Error obteniendo pedidos en preparación:";
+    public static final String ERROR_ACEPTANDO_PEDIDO_ = "Error aceptando pedido:";
+    public static final String ERROR_CANCELANDO_PEDIDO_ = "Error actualizando pedido:";
+    public static final String ERROR_LEYENDO_PEDIDO_ACEPTADO = "Error obteniendo pedido aceptado:";
+    public static final String ERROR_LEYENDO_PEDIDOS_DE_REPARTIDOR = "Error obteniendo pedidos por repartidor:";
+    public static final String ERROR_ENTREGANDO_PEDIDO_ = "Error entregando pedido:";
+    public static final String ERROR_LEYENDO_PLATO_POR_ID = "Error obteniendo plato por id:";
+    public static final String ERROR_LEYENDO_PRODUCTO_POR_ID = "Error obteniendo producto por id:";
+    public static final String ERROR_LEYENDO_PRODUCTO_POR_NOMBRE = "Error obteniendo producto por nombre:";
+    public static final String ERROR_ACTIVANDO_USUARIO = "Error activando usuario:";
+    public static final String ERROR_LEYENDO_USUARIO_POR_ID = "Error obteniendo usuario por ID:";
+    public static final String TOKEN_EXPIRADO = "Sesión caducada, vuelva a iniciar sesión";
+    public static final String TOKEN_RENOVADO_A = "Token renovado a";
     public static final String CONTRASENA_INCORRECTA = "Contraseña incorrecta";
     public static final String CORREO_NO_EXISTE = "Este correo no existe";
     public static final String TOKEN_VALIDO = "Token valido";
     public static final String INICIO_SESION = " inició sesión";
 
-    private ConstantesInfo(){}
-
-
-
-
-
-
+    private ConstantesInfo() {
+    }
 
 
     public static final String ERROR_CANCELANDO_PEDIDO = "Error cancelando pedido";
@@ -52,7 +47,7 @@ public class ConstantesInfo {
     public static final String USUARIO_NO_ACTIVADO = "Usuario no activado";
     public static final String USUARIO_YA_ACTIVADO = "Usuario ya activado";
     public static final String CODIGO_ACTIVACION_INCORRECTO = "Código de activación incorrecto";
-    public static final String ERROR_VALIDANDO_TOKEN = "Error validando token: {}";
+    public static final String ERROR_VALIDANDO_TOKEN = "Error validando token:";
     public static final String ERROR_CREANDO_USUARIO = "Error creando usuario";
     public static final String TOKEN_INVALIDO = "Token no proporcionado o inválido";
     public static final String TOKEN_INVALIDO_O_EXPIRADO = "Token inválido o expirado";
@@ -65,10 +60,10 @@ public class ConstantesInfo {
     public static final String USUARIO_CREADO = "Usuario creado, active su cuenta mediante su correo electrónico";
     public static final String SHA_512 = "SHA-512";
     public static final String USUARIO_ACTIVADO = "Usuario activado";
-    public static final String USUARIO_AUTENTICADO = "Usuario autenticado: {}";
-    public static final String PEDIDO_ANADIDO_ = "Pedido añadido: ";
-    public static final String PEDIDO_ACEPTADO_POR = "Pedido aceptado por ";
-    public static final String CANCELADO_POR = " cancelado por ";
+    public static final String USUARIO_AUTENTICADO = "Usuario autenticado:";
+    public static final String PEDIDO_ANADIDO_ = "Pedido añadido:";
+    public static final String PEDIDO_ACEPTADO_POR = "Pedido aceptado por";
+    public static final String CANCELADO_POR = " cancelado por";
     public static final String REPARTIDOR_SIN_PEDIDOS_ACEPTADOS = "El repartidor no tiene ningún pedido aceptado";
-    public static final String ENTREGADO_POR = " entregado por ";
+    public static final String ENTREGADO_POR = " entregado por";
 }

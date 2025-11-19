@@ -30,8 +30,8 @@ public class LoginRestController {
     public ResponseEntity<AuthenticationResponse> login(@RequestParam @NotBlank String correo, @RequestParam @NotBlank String contrasena) {
         serviceUsuarios.comprobarCredenciales(correo, contrasena);
         TipoUsuario tipoUsuario = serviceUsuarios.getUsuarioByCorreo(correo).getTipoUsuario();
-        String accessToken = configurationTokens.crearToken(correo, 120000);
-        String refreshToken = configurationTokens.crearToken(correo, 900000);
+        String accessToken = configurationTokens.crearToken(correo, 30 * 1000); // *1000 porque son milisegundos
+        String refreshToken = configurationTokens.crearToken(correo, 120 * 1000); // *1000 porque son milisegundos
         log.info(correo + ConstantesInfo.INICIO_SESION);
         return ResponseEntity.ok().body(
                 AuthenticationResponse.builder()
@@ -53,8 +53,8 @@ public class LoginRestController {
             String correoUsuario = configurationTokens.getCorreo(refreshToken);
 
             TipoUsuario tipoUsuario = serviceUsuarios.getUsuarioByCorreo(correoUsuario).getTipoUsuario();
-            String newAccessToken = configurationTokens.crearToken(correoUsuario, 120000);
-            String newRefreshToken = configurationTokens.crearToken(correoUsuario, 900000);
+            String newAccessToken = configurationTokens.crearToken(correoUsuario, 30 * 1000); // *1000 porque son milisegundos
+            String newRefreshToken = configurationTokens.crearToken(correoUsuario, 120 * 1000); // *1000 porque son milisegundos
 
             log.info(ConstantesInfo.TOKEN_RENOVADO_A + correoUsuario);
 

@@ -1,7 +1,9 @@
 package com.tierraburritoservidor.config;
 
+import com.tierraburritoservidor.common.ConstantesInfo;
 import com.tierraburritoservidor.filters.TokenFilter;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,6 +12,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+@Log4j2
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -23,9 +26,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        // Define un AuthenticationEntryPoint personalizado para 401
         AuthenticationEntryPoint entryPoint = (request, response, authException) -> {
             if (!response.isCommitted()) {
+                log.error(authException.getMessage());
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
             }
         };
