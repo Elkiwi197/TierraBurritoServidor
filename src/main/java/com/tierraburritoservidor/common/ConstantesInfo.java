@@ -5,7 +5,7 @@ public class ConstantesInfo {
     public static final String ERROR_LEYENDO_PEDIDOS_DE_CLIENTE = "Error obteniendo pedidos por cliente:";
     public static final String ERROR_LEYENDO_PEDIDOS_EN_PREPARACION = "Error obteniendo pedidos en preparación:";
     public static final String ERROR_ACEPTANDO_PEDIDO_ = "Error aceptando pedido:";
-    public static final String ERROR_CANCELANDO_PEDIDO_ = "Error actualizando pedido:";
+    public static final String ERROR_ACTUALIZANDO_PEDIDO_ = "Error actualizando pedido:";
     public static final String ERROR_LEYENDO_PEDIDO_ACEPTADO = "Error obteniendo pedido aceptado:";
     public static final String ERROR_LEYENDO_PEDIDOS_DE_REPARTIDOR = "Error obteniendo pedidos por repartidor:";
     public static final String ERROR_ENTREGANDO_PEDIDO_ = "Error entregando pedido:";
@@ -14,17 +14,23 @@ public class ConstantesInfo {
     public static final String ERROR_LEYENDO_PRODUCTO_POR_NOMBRE = "Error obteniendo producto por nombre:";
     public static final String ERROR_ACTIVANDO_USUARIO = "Error activando usuario:";
     public static final String ERROR_LEYENDO_USUARIO_POR_ID = "Error obteniendo usuario por ID:";
-    public static final String TOKEN_EXPIRADO = "Sesión caducada, vuelva a iniciar sesión";
+    public static final String TOKEN_EXPIRADO = "Token expirado";
     public static final String TOKEN_RENOVADO_A = "Token renovado a";
     public static final String CONTRASENA_INCORRECTA = "Contraseña incorrecta";
     public static final String CORREO_NO_EXISTE = "Este correo no existe";
     public static final String TOKEN_VALIDO = "Token valido";
     public static final String INICIO_SESION = " inició sesión";
+    public static final String SESION_CADUCADA = "Sesión caducada, vuelva a iniciar sesión";
+    public static final String PEDIDO_SIN_REPARTIDOR = "Pedido sin repartidor";
+    public static final String ERROR_ACTUALIZANDO_PEDIDO = "Error actualizando pedido";
+    public static final String ERROR_CANCELANDO_PEDIDO_ = "Error cancelando pedido: ";
 
     private ConstantesInfo() {
     }
 
 
+
+    public static final String ERROR_NO_REPARTIENDO_PEDIDO = "Error";
     public static final String ERROR_CANCELANDO_PEDIDO = "Error cancelando pedido";
     public static final String ERROR_ENTREGANDO_PEDIDO = "Error entregando pedido";
     public static final String ERROR_ACEPTANDO_PEDIDO = "Error aceptando pedido";

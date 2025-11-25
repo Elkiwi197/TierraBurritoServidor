@@ -1,5 +1,6 @@
 package com.tierraburritoservidor.dao;
 
+import com.tierraburritoservidor.dao.model.PlatoDB;
 import com.tierraburritoservidor.dao.model.ProductoDB;
 import org.bson.types.ObjectId;
 
@@ -11,4 +12,6 @@ public interface RepositoryProductosInterface {
     ProductoDB getProductoByNombre(String nombre);
 
     ProductoDB getProductoByObjectId(ObjectId objectId);
+
+    List<ProductoDB> getExtrasByPlatoDB(PlatoDB platoDB);
 }

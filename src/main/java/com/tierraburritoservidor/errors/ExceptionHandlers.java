@@ -78,6 +78,12 @@ public class ExceptionHandlers {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
     }
 
+    @ExceptionHandler(ContrasenaIncorrectaException.class)
+    public ResponseEntity<ApiError> handleException(ContrasenaIncorrectaException e) {
+        ApiError apiError = new ApiError(e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
+    }
+
 
     @ExceptionHandler(UsuarioYaActivadoException.class)
     public ResponseEntity<ApiError> handleException(UsuarioYaActivadoException e) {

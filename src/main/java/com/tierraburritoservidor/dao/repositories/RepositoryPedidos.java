@@ -69,7 +69,6 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
             log.info(ConstantesInfo.PEDIDO_ANADIDO_ + pedidoIdManager.getPedidoId(pedido.get_id()) + ", " + pedido.get_id());
         } catch (Exception e) {
             log.error(ConstantesInfo.ERROR_CREANDO_PEDIDO, e.getMessage(), e);
-            throw new RuntimeException(ConstantesInfo.ERROR_CREANDO_PEDIDO);
         }
         return ConstantesInfo.PEDIDO_HECHO;
     }
@@ -221,5 +220,24 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
         }
         return ConstantesInfo.PEDIDO_ENTREGADO;
     }
+
+    @Override
+    public String noRepartirEstePedido(int idPedido) {
+        try {
+            MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
+            collection.updateOne(
+                    eq(Constantes._ID, pedidoIdManager.getPedidoObjectId(idPedido)),
+                    set(Constantes.ESTADO, EstadoPedido.EN_PREPARACION)
+            );
+            collection.updateOne(
+                    eq(Constantes._ID, pedidoIdManager.getPedidoObjectId(idPedido)),
+                    set(Constantes.REPARTIDOR, null)
+            );
+            log.info(Constantes.PEDIDO + " " + idPedido + Constantes.EN_PREPARACION);
+        } catch (Exception e) {
+            log.error(ConstantesInfo.ERROR_ACTUALIZANDO_PEDIDO_, e.getMessage(), e);
+            return ConstantesInfo.ERROR_ACTUALIZANDO_PEDIDO;
+        }
+        return ConstantesInfo.PEDIDO_SIN_REPARTIDOR;    }
 }
 

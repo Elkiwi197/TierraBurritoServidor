@@ -9,13 +9,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 
@@ -30,16 +27,15 @@ public class TokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException {
-
-        String authHeader = request.getHeader(Constantes.AUTHORIZATION_HEADER);
-        if (authHeader == null || !authHeader.startsWith(Constantes.BEARER)) {
-            log.warn(ConstantesInfo.TOKEN_NO_PROPORCIONADO);
-            sendJsonError(response, HttpServletResponse.SC_UNAUTHORIZED, ConstantesInfo.TOKEN_NO_PROPORCIONADO);
-        }
-
-        String token = authHeader.substring(7);
-
         try {
+            String authHeader = request.getHeader(Constantes.AUTHORIZATION_HEADER);
+            if (authHeader == null || !authHeader.startsWith(Constantes.BEARER)) {
+                log.warn(ConstantesInfo.TOKEN_NO_PROPORCIONADO);
+                sendJsonError(response, HttpServletResponse.SC_UNAUTHORIZED, ConstantesInfo.TOKEN_NO_PROPORCIONADO);
+            }
+
+            String token = authHeader.substring(7);
+
             if (!configurationTokens.validarToken(token)) {
                 log.error(ConstantesInfo.ERROR_VALIDANDO_TOKEN);
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ConstantesInfo.TOKEN_INVALIDO_O_EXPIRADO);
@@ -60,7 +56,7 @@ public class TokenFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
             log.warn(ConstantesInfo.TOKEN_EXPIRADO);
-            sendJsonError(response, HttpServletResponse.SC_UNAUTHORIZED, ConstantesInfo.TOKEN_EXPIRADO);
+            sendJsonError(response, HttpServletResponse.SC_UNAUTHORIZED, ConstantesInfo.SESION_CADUCADA);
         } catch (Exception e) {
             log.error(ConstantesInfo.ERROR_VALIDANDO_TOKEN, e.getMessage());
             sendJsonError(response, HttpServletResponse.SC_UNAUTHORIZED, ConstantesInfo.TOKEN_INVALIDO);

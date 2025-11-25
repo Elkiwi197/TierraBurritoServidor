@@ -84,6 +84,8 @@ public class DatabaseUiParser {
         return plato;
     }
 
+
+
     public Producto productoDBtoProducto(ProductoDB productoDB) {
         Producto producto = new Producto();
         producto.setNombre(productoDB.getNombre());
@@ -181,10 +183,13 @@ public class DatabaseUiParser {
         platoDB.setPrecio(plato.getPrecio());
 
         List<ObjectId> ingredientes = new ArrayList<>();
+        List<ObjectId> extras = new ArrayList<>();
         plato.getIngredientes().forEach(i -> ingredientes.add(productoIdManager.getObjectId(i.getId())));
-        plato.getExtras().forEach(e -> ingredientes.add(productoIdManager.getObjectId(e.getId())));
+        plato.getExtras().forEach(e -> extras.add(productoIdManager.getObjectId(e.getId())));
         platoDB.setIngredientes(ingredientes);
+        platoDB.setExtras(extras);
         platoDB.set_id(platoIdManager.createNewId());
         return platoDB;
     }
+
 }

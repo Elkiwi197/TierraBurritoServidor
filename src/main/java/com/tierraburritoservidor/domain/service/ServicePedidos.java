@@ -8,6 +8,7 @@ import com.tierraburritoservidor.domain.model.Pedido;
 import com.tierraburritoservidor.domain.model.Plato;
 import com.tierraburritoservidor.domain.model.Producto;
 import com.tierraburritoservidor.domain.util.DatabaseUiParser;
+import com.tierraburritoservidor.errors.exceptions.PedidoNoEncontradoException;
 import com.tierraburritoservidor.errors.exceptions.PedidosNoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,12 +37,15 @@ public class ServicePedidos {
             Pedido pedido = databaseUiParser.pedidoDBtoPedido(pedidoDB);
             pedido.getPlatos().clear();
             pedidoDB.getPlatos().forEach(platoDB -> {
-                Plato plato = new Plato();
+                Plato plato = databaseUiParser.platoDBtoPlato(platoDB);
                 List<Producto> ingredientes = new ArrayList<>();
                 platoDB.getIngredientes().forEach(objectId ->
                         ingredientes.add(databaseUiParser.productoDBtoProducto(repositoryProductos.getProductoByObjectId(objectId))));
-                plato = databaseUiParser.platoDBtoPlato(platoDB);
                 plato.setIngredientes(ingredientes);
+                List<Producto> extras = new ArrayList<>();
+                platoDB.getExtras().forEach(objectId ->
+                        extras.add(databaseUiParser.productoDBtoProducto(repositoryProductos.getProductoByObjectId(objectId))));
+                plato.setExtras(extras);
                 pedido.getPlatos().add(plato);
             });
             pedidos.add(pedido);
@@ -101,6 +105,10 @@ public class ServicePedidos {
         return repositoryPedidos.cancelarPedido(idPedido, correoRepartidor);
     }
 
+    public String noRepartirEstePedido(int idPedido) {
+        return repositoryPedidos.noRepartirEstePedido(idPedido);
+    }
+
     public Pedido getPedidoAceptado(String correoRepartidor) {
         repositoryPedidos.inicializarPedidos();
         repositoryProductos.getIngredientes();
@@ -127,7 +135,7 @@ public class ServicePedidos {
                     });
             return pedido;
         } else {
-            return null;
+            throw new PedidoNoEncontradoException();
         }
     }
 

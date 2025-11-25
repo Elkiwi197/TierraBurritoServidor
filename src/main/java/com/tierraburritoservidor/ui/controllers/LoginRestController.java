@@ -43,7 +43,6 @@ public class LoginRestController {
 
     @PostMapping("/auth/refresh")
     public AuthenticationResponse refresh(@RequestHeader(Constantes.AUTHORIZATION_HEADER) String authorizationHeader) {
-        log.info("Header recibido: {}", authorizationHeader);
         String refreshToken = authorizationHeader.replace("Bearer ", "");
 
         if (!configurationTokens.validarToken(refreshToken)) {

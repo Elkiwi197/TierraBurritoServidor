@@ -21,4 +21,5 @@ public interface RepositoryPedidosInterface {
     List<PedidoDB> getPedidosRepartidos(String correoRepartidor);
 
     String entregarPedido(int idPedido, String correoRepartidor);
+    String noRepartirEstePedido(int idPedido);
 }

@@ -8,6 +8,7 @@ import com.mongodb.client.model.Filters;
 import com.tierraburritoservidor.common.Constantes;
 import com.tierraburritoservidor.common.ConstantesInfo;
 import com.tierraburritoservidor.dao.RepositoryProductosInterface;
+import com.tierraburritoservidor.dao.model.PlatoDB;
 import com.tierraburritoservidor.dao.model.ProductoDB;
 import com.tierraburritoservidor.dao.util.DocumentPojoParser;
 import com.tierraburritoservidor.dao.util.ProductoIdManager;
@@ -96,6 +97,28 @@ public class RepositoryProductos implements RepositoryProductosInterface {
 
         }
         return producto;
+    }
+
+    @Override
+    public List<ProductoDB> getExtrasByPlatoDB(PlatoDB platoDB) {
+        List<ProductoDB> extrasDB = new ArrayList<>();
+
+        try {
+            MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
+            List<Document> documents = collection.find().into(new ArrayList<>());
+            HashMap<ObjectId, Integer> newIds = new HashMap<>();
+            documents.forEach(document -> {
+                ProductoDB extraDB = documentPojoParser.documentToProductoDB(document);
+                if (!platoDB.getIngredientes().contains(extraDB.get_id())){
+                    extrasDB.add(extraDB);
+                }
+            });
+            productoIdManager.setProductoIds(newIds);
+        } catch (Exception e) {
+            log.error( ConstantesInfo.ERROR_LEYENDO_PRODUCTOS, e.getMessage(), e);
+        }
+
+        return extrasDB;
     }
 
 

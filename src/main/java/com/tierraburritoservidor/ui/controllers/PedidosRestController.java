@@ -48,6 +48,11 @@ public class PedidosRestController {
         return servicePedidos.entregarPedido(idPedido, correoRepartidor);
     }
 
+    @PostMapping("/noRepartirEstePedido")
+    public String noRepartirEstePedido(@RequestParam int idPedido){
+        return servicePedidos.noRepartirEstePedido(idPedido);
+    }
+
     @GetMapping("/aceptado/{correoRepartidor}")
     public Pedido getPedidoAceptado(@PathVariable String correoRepartidor) {
         return servicePedidos.getPedidoAceptado(correoRepartidor);

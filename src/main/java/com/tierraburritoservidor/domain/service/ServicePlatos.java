@@ -2,6 +2,7 @@
 package com.tierraburritoservidor.domain.service;
 
 import com.tierraburritoservidor.dao.model.PlatoDB;
+import com.tierraburritoservidor.dao.model.ProductoDB;
 import com.tierraburritoservidor.dao.repositories.RepositoryPlatos;
 import com.tierraburritoservidor.dao.repositories.RepositoryProductos;
 import com.tierraburritoservidor.dao.util.PlatoIdManager;
@@ -46,12 +47,17 @@ public class ServicePlatos {
         if (platoDB == null) {
             throw new PlatoNoEncontradoException();
         }
-        Plato plato = databaseUiParser.platoDBtoPlato(platoDB);
         List<Producto> ingredientes = new ArrayList<>();
+        List<Producto> extras = new ArrayList<>();
+        Plato plato = databaseUiParser.platoDBtoPlato(platoDB);
         platoDB.getIngredientes().forEach(objectId ->
                 ingredientes.add(databaseUiParser.productoDBtoProducto(
                         repositoryProductos.getProductoByObjectId(objectId))));
         plato.setIngredientes(ingredientes);
+        List<ProductoDB> extrasDB = repositoryProductos.getExtrasByPlatoDB(platoDB);
+        extrasDB.forEach(e -> extras.add(databaseUiParser.productoDBtoProducto(e)));
+        plato.setIngredientes(ingredientes);
+        plato.setExtras(extras);
         return plato;
     }
 }

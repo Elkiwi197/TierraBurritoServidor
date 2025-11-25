@@ -1,6 +1,7 @@
 package com.tierraburritoservidor.domain.service;
 
 
+import com.tierraburritoservidor.dao.model.PlatoDB;
 import com.tierraburritoservidor.dao.model.ProductoDB;
 import com.tierraburritoservidor.dao.repositories.RepositoryPlatos;
 import com.tierraburritoservidor.dao.repositories.RepositoryProductos;
@@ -44,16 +45,24 @@ public class ServiceProductos {
 
     public List<Producto> getExtrasByPlato(Plato plato) {
         List<Producto> extras = new ArrayList<>();
-        List<ObjectId> ingredientesPlato = new ArrayList<>();
-        plato.getIngredientes().forEach(i -> ingredientesPlato.add(productoIdManager.getObjectId(i.getId())));
-        repositoryProductos.getIngredientes().forEach(i -> {
-            if (!ingredientesPlato.contains(i.get_id())){
-                extras.add(databaseUiParser.productoDBtoProducto(i));
-                // Llama 20 veces a la BBDD, pero si la linea de arriba falla se pone
-                // extras.add(getProductoByNombre(i.getNombre()));
-                //todo este metodo no funciona muy bien
-            }
-        });
+        repositoryPlatos.getAllPlatos();
+        PlatoDB platoDB = repositoryPlatos.getPlatoById(platoIdManager.getObjectId(plato.getId()));
+        List<ProductoDB> extrasDB = repositoryProductos.getExtrasByPlatoDB(platoDB);
+        extrasDB.forEach(extraDB -> extras.add(databaseUiParser.productoDBtoProducto(extraDB)));
         return extras;
+
+
+
+
+//        plato.getIngredientes().forEach(i -> ingredientesPlato.add(productoIdManager.getObjectId(i.getId())));
+//        repositoryProductos.getIngredientes().forEach(i -> {
+//            if (!ingredientesPlato.contains(i.get_id())) {
+//                extras.add(databaseUiParser.productoDBtoProducto(i));
+//                // Llama 20 veces a la BBDD, pero si la linea de arriba falla se pone
+//                // extras.add(getProductoByNombre(i.getNombre()));
+//                //todo este metodo no funciona muy bien
+//            }
+//        });
+//        return extras;
     }
 }

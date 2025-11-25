@@ -19,6 +19,7 @@ public class PlatoDB {
     private ObjectId _id;
     private String nombre;
     private List<ObjectId> ingredientes;
+    private List<ObjectId> extras;
     private double precio;
     private String rutaFoto;
 }
