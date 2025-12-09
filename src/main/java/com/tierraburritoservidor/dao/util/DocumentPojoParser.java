@@ -3,22 +3,20 @@ package com.tierraburritoservidor.dao.util;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tierraburritoservidor.common.Constantes;
+import com.tierraburritoservidor.dao.model.IngredienteDB;
 import com.tierraburritoservidor.dao.model.PedidoDB;
 import com.tierraburritoservidor.dao.model.PlatoDB;
-import com.tierraburritoservidor.dao.model.ProductoDB;
 import com.tierraburritoservidor.dao.model.UsuarioDB;
-import com.tierraburritoservidor.domain.model.Plato;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class DocumentPojoParser {
 
-    private Gson gson = new GsonBuilder()
+    private final Gson gson = new GsonBuilder()
             .create();
 
     public UsuarioDB documentToUsuarioDB(Document document) {
@@ -35,16 +33,10 @@ public class DocumentPojoParser {
         return platoDB;
     }
 
-    public ProductoDB documentToProductoDB(Document document) {
-        ProductoDB productoDB = gson.fromJson(document.toJson(), ProductoDB.class);
-        productoDB.set_id(document.getObjectId(Constantes._ID));
-        return productoDB;
+    public IngredienteDB documentToProductoDB(Document document) {
+        IngredienteDB ingredienteDB = gson.fromJson(document.toJson(), IngredienteDB.class);
+        ingredienteDB.set_id(document.getObjectId(Constantes._ID));
+        return ingredienteDB;
     }
 
-    public PedidoDB documentToPedidoDB(Document document) {
-        PedidoDB pedido = gson.fromJson(document.toJson(), PedidoDB.class);
-        pedido.set_id(document.getObjectId(Constantes._ID));
-        List<PlatoDB> platos = (List<PlatoDB>) document.get(Constantes.PLATOS_MIN);
-        return pedido;
-    }
 }

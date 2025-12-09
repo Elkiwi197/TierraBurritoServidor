@@ -1,0 +1,23 @@
+services:
+  mongodb:
+    image: mongo:8.2
+    container_name: mongodb-tierra-burrito
+    ports:
+      - "27016:27016"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    command: [ "--port", "27016" ]
+    volumes:
+      - mongodata:/data/db
+
+  app:
+    build: .
+    container_name: servidor-tierra-burrito
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+
+volumes:
+  mongodata:

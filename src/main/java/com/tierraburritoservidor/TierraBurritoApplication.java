@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 @SpringBootApplication(exclude = {
         DataSourceAutoConfiguration.class,
         HibernateJpaAutoConfiguration.class
-})
+}, scanBasePackages = "com.tierraburritoservidor")
 public class TierraBurritoApplication {
     public static void main(String[] args) {
         SpringApplication.run(TierraBurritoApplication.class, args);

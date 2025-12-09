@@ -1,35 +1,22 @@
 package com.tierraburritoservidor.dao.util;
 
+import jakarta.inject.Singleton;
 import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @Setter
 @Component
 public class UserIdManager {
 
 
-    private HashMap<ObjectId, Integer> userIds = new HashMap<>();
+    private Map<ObjectId, Integer> userIds = new HashMap<>();
 
     public Integer getId(ObjectId objectId) {
         return userIds.get(objectId);
-    }
-
-    public ObjectId createNewId() {
-        boolean repeated = true;
-        int newId = userIds.size()+1;
-        ObjectId objectId = new ObjectId();
-        do {
-            if (userIds.containsKey(objectId)) {
-                objectId = new ObjectId();
-            } else {
-                repeated = false;
-            }
-        } while (repeated);
-        userIds.put(objectId, newId);
-        return objectId;
     }
 
     public ObjectId getObjectId(int id) {
@@ -45,7 +32,6 @@ public class UserIdManager {
 
     public void anadirObjectId(ObjectId objectId) {
         userIds.put(objectId, userIds.size()+1);
-
     }
 }
 

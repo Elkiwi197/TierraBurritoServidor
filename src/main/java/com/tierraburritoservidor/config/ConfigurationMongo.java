@@ -12,8 +12,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 public class ConfigurationMongo {
 
     @Bean
-    public MongoClient mongoClient() {
-        return MongoClients.create("mongodb://root:root@localhost:27017/");
+    public MongoClient mongoClient(ConfigurationProperties configurationProperties) {
+        return MongoClients.create(configurationProperties.getBaseDeDatos());
     }
 
     @Bean

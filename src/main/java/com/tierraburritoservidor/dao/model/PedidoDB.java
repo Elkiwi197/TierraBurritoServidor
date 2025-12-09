@@ -19,7 +19,6 @@ public class PedidoDB {
     private String direccion;
     private String correoCliente;
     private List<PlatoDB> platos;
-    private List<ProductoDB> otros;
     private double precio;
     private String estado;
     private String repartidor;

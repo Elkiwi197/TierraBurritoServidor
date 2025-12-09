@@ -31,11 +31,12 @@ public class MailComponent {
         message.setTo(destinatario);
         message.setSubject(asunto);
         //todo cambiar a IP definitiva
-        message.setText("<html><a href=\"http://localhost:8080/signup/activar/"+idUsuario+"?codigo="+codigo+"\">ACTIVAR CUENTA</a></html>");
+        message.setText("<html><a href=\"http://192.168.100.138:8080/signup/activar/"+idUsuario+"?codigo="+codigo+"\">ACTIVAR CUENTA</a></html>");
         try {
             javaMailSender.send(message);
         } catch(MailAuthenticationException e){
             log.warn(ConstantesInfo.CORREO_NO_EXISTE);
+            e.printStackTrace();
         } catch (MailException e) {
             log.error(e.getMessage());
            throw new CorreoException();

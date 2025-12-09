@@ -1,5 +1,6 @@
 package com.tierraburritoservidor.dao.util;
 
+import jakarta.inject.Singleton;
 import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Component;
@@ -50,32 +51,6 @@ public class PedidoIdManager {
 
     public Integer getPlatoId(ObjectId objectId) {
         return platosPedidoIds.get(objectId);
-    }
-
-    public ObjectId createNewPlatoId() {
-        boolean repeated = true;
-        int newId = platosPedidoIds.size()+1;
-        ObjectId objectId = new ObjectId();
-        do {
-            if (platosPedidoIds.containsKey(objectId)) {
-                objectId = new ObjectId();
-            } else {
-                repeated = false;
-            }
-        } while (repeated);
-        platosPedidoIds.put(objectId, newId);
-        return objectId;
-    }
-
-    public ObjectId getPlatoObjectId(int id) {
-        if (platosPedidoIds.containsValue(id)) {
-            for (HashMap.Entry<ObjectId, Integer> entry : platosPedidoIds.entrySet()) {
-                if (entry.getValue().equals(id)) {
-                    return entry.getKey();
-                }
-            }
-        }
-        return null;
     }
 
     public void anadirPlatoObjectId(ObjectId objectId) {

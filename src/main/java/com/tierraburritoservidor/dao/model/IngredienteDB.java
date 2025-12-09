@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = Constantes.PRODUCTOS)
-public class ProductoDB {
+public class IngredienteDB {
     @Id
     private ObjectId _id;
     private String nombre;

@@ -1,8 +1,8 @@
 package com.tierraburritoservidor.ui.controllers;
 
 import com.tierraburritoservidor.domain.model.Plato;
-import com.tierraburritoservidor.domain.model.Producto;
-import com.tierraburritoservidor.domain.service.ServiceProductos;
+import com.tierraburritoservidor.domain.model.Ingrediente;
+import com.tierraburritoservidor.domain.service.ServiceIngredientes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,16 +16,16 @@ import java.util.List;
 @RequestMapping("/productos")
 public class ProductosRestController {
 
-    private final ServiceProductos serviceProductos;
+    private final ServiceIngredientes serviceIngredientes;
 
     @PostMapping("/ingredientes/plato")
-    public List<Producto> getIngredientesByPlato(@RequestBody Plato plato){
-        return serviceProductos.getIngredientesByPlato(plato);
+    public List<Ingrediente> getIngredientesByPlato(@RequestBody Plato plato){
+        return serviceIngredientes.getIngredientesByPlato(plato);
     }
 
     @PostMapping("/extras/plato")
-    public List<Producto> getExtrasByPlato(@RequestBody Plato plato){
-        return serviceProductos.getExtrasByPlato(plato);
+    public List<Ingrediente> getExtrasByPlato(@RequestBody Plato plato){
+        return serviceIngredientes.getExtrasByPlato(plato);
     }
 
 }

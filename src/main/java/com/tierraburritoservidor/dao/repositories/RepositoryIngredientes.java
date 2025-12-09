@@ -1,23 +1,25 @@
 package com.tierraburritoservidor.dao.repositories;
 
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.tierraburritoservidor.common.Constantes;
 import com.tierraburritoservidor.common.ConstantesInfo;
-import com.tierraburritoservidor.dao.RepositoryProductosInterface;
+import com.tierraburritoservidor.dao.RepositoryIngredientesInterface;
+import com.tierraburritoservidor.dao.model.IngredienteDB;
 import com.tierraburritoservidor.dao.model.PlatoDB;
-import com.tierraburritoservidor.dao.model.ProductoDB;
 import com.tierraburritoservidor.dao.util.DocumentPojoParser;
-import com.tierraburritoservidor.dao.util.ProductoIdManager;
-import com.tierraburritoservidor.errors.exceptions.ProductoNoEncontradoException;
+import com.tierraburritoservidor.dao.util.IngredienteIdManager;
+import com.tierraburritoservidor.errors.exceptions.IngredienteNoEncontradoException;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -27,61 +29,73 @@ import java.util.List;
 @Log4j2
 @Repository
 @RequiredArgsConstructor
-public class RepositoryProductos implements RepositoryProductosInterface {
+public class RepositoryIngredientes implements RepositoryIngredientesInterface {
 
 
-    private final String COLLECTION_NAME = Constantes.PRODUCTOS;
+    private final String COLLECTION_NAME = Constantes.COLECCION_INGREDIENTES;
 
     private final DocumentPojoParser documentPojoParser;
-    private final ProductoIdManager productoIdManager;
+    private final IngredienteIdManager ingredienteIdManager;
     private final MongoTemplate mongoTemplate;
-    private final Gson gson = new GsonBuilder()
-            .create();
 
 
+    @EventListener(ApplicationReadyEvent.class)
+    @Override
+    public void inicializarIngredientes() {
+        try {
+            List<IngredienteDB> ingredientes = new ArrayList<>();
+            Query query = new Query();
+            ingredientes = mongoTemplate.find(query, IngredienteDB.class, COLLECTION_NAME);
 
+            ingredientes.forEach(ingrediente -> {
+                if (ingredienteIdManager.getId(ingrediente.get_id()) == null) {
+                    ingredienteIdManager.anadirObjectId(ingrediente.get_id());
+                }
+            });
+        } catch (Exception e) {
+            log.error(ConstantesInfo.ERROR_INICIALIZANDO_INGREDIENTES, e.getMessage(), e);
+        }
+    }
 
-    public List<ProductoDB> getIngredientes() {
-        List<ProductoDB> productos = new ArrayList<>();
+    @Override
+    public List<IngredienteDB> getIngredientes() {
+        List<IngredienteDB> productos = new ArrayList<>();
         try {
             MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
             List<Document> documents = collection.find().into(new ArrayList<>());
-            HashMap<ObjectId, Integer> newIds = new HashMap<>();
             documents.forEach(document -> {
                 productos.add(documentPojoParser.documentToProductoDB(document));
-                newIds.put(document.getObjectId(Constantes._ID), newIds.size() + 1);
             });
-            productoIdManager.setProductoIds(newIds);
         } catch (Exception e) {
-            log.error( ConstantesInfo.ERROR_LEYENDO_PRODUCTOS, e.getMessage(), e);
+            log.error(ConstantesInfo.ERROR_LEYENDO_PRODUCTOS, e.getMessage(), e);
         }
         return productos;
     }
 
-
-
-    public ProductoDB getProductoByNombre(String nombre) {
-        ProductoDB producto = new ProductoDB();
+    @Override
+    public IngredienteDB getIngredienteByNombre(String nombre) {
+        IngredienteDB producto = new IngredienteDB();
         try {
             MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
-
             Document document = collection.find(Filters.eq(Constantes.NOMBRE, nombre)).first();
             if (document != null) {
                 producto = documentPojoParser.documentToProductoDB(document);
             } else {
-                throw new ProductoNoEncontradoException();
+                producto = null;
             }
-
         } catch (Exception e) {
             log.error(ConstantesInfo.ERROR_LEYENDO_PRODUCTO_POR_NOMBRE, e.getMessage(), e);
 
+        }
+        if (producto == null){
+            throw new IngredienteNoEncontradoException();
         }
         return producto;
     }
 
     @Override
-    public ProductoDB getProductoByObjectId(ObjectId objectId) {
-        ProductoDB producto = new ProductoDB();
+    public IngredienteDB getIngredienteByObjectId(ObjectId objectId) {
+        IngredienteDB producto = new IngredienteDB();
         try {
             MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
 
@@ -89,7 +103,7 @@ public class RepositoryProductos implements RepositoryProductosInterface {
             if (document != null) {
                 producto = documentPojoParser.documentToProductoDB(document);
             } else {
-                throw new ProductoNoEncontradoException();
+                throw new IngredienteNoEncontradoException();
             }
 
         } catch (Exception e) {
@@ -100,22 +114,22 @@ public class RepositoryProductos implements RepositoryProductosInterface {
     }
 
     @Override
-    public List<ProductoDB> getExtrasByPlatoDB(PlatoDB platoDB) {
-        List<ProductoDB> extrasDB = new ArrayList<>();
+    public List<IngredienteDB> getExtrasByPlatoDB(PlatoDB platoDB) {
+        List<IngredienteDB> extrasDB = new ArrayList<>();
 
         try {
             MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
             List<Document> documents = collection.find().into(new ArrayList<>());
             HashMap<ObjectId, Integer> newIds = new HashMap<>();
             documents.forEach(document -> {
-                ProductoDB extraDB = documentPojoParser.documentToProductoDB(document);
-                if (!platoDB.getIngredientes().contains(extraDB.get_id())){
+                IngredienteDB extraDB = documentPojoParser.documentToProductoDB(document);
+                if (!platoDB.getIngredientes().contains(extraDB.get_id())) {
                     extrasDB.add(extraDB);
                 }
             });
-            productoIdManager.setProductoIds(newIds);
+            ingredienteIdManager.setIngredienteIds(newIds);
         } catch (Exception e) {
-            log.error( ConstantesInfo.ERROR_LEYENDO_PRODUCTOS, e.getMessage(), e);
+            log.error(ConstantesInfo.ERROR_LEYENDO_PRODUCTOS, e.getMessage(), e);
         }
 
         return extrasDB;

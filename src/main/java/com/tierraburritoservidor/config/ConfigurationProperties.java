@@ -15,6 +15,7 @@ public class ConfigurationProperties {
 
 
     private String clave;
+    private String baseDeDatos;
 
     private static ConfigurationProperties configuracion;
 
@@ -32,9 +33,11 @@ public class ConfigurationProperties {
             p.load(getClass().getClassLoader()
                     .getResourceAsStream(Constantes.APPLICATION_PROPERTIES));
             this.clave = p.getProperty(Constantes.CLAVE);
+            this.baseDeDatos = p.getProperty(Constantes.BASE_DE_DATOS);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
     }
+
 
 }

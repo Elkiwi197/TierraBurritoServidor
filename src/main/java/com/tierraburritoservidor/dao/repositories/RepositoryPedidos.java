@@ -7,14 +7,15 @@ import com.tierraburritoservidor.common.Constantes;
 import com.tierraburritoservidor.common.ConstantesInfo;
 import com.tierraburritoservidor.dao.RepositoryPedidosInterface;
 import com.tierraburritoservidor.dao.model.PedidoDB;
-import com.tierraburritoservidor.dao.util.DocumentPojoParser;
 import com.tierraburritoservidor.dao.util.PedidoIdManager;
-import com.tierraburritoservidor.dao.util.ProductoIdManager;
 import com.tierraburritoservidor.domain.model.EstadoPedido;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -25,22 +26,21 @@ import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.set;
+import static com.mongodb.client.model.Updates.unset;
 
 @Repository
 @RequiredArgsConstructor
 @Log4j2
 public class RepositoryPedidos implements RepositoryPedidosInterface {
 
-    private final String COLLECTION_NAME = "Pedidos";
+    private final String COLLECTION_NAME = Constantes.COLECCION_PEDIDOS;
 
-    private final DocumentPojoParser documentPojoParser;
     private final PedidoIdManager pedidoIdManager;
-    private final ProductoIdManager productoIdManager;
     private final MongoTemplate mongoTemplate;
-    private final Gson gson = new GsonBuilder()
-            .create();
 
 
+    @EventListener(ApplicationReadyEvent.class)
+    @Override
     public void inicializarPedidos() {
         try {
             List<PedidoDB> pedidos = new ArrayList<>();
@@ -57,16 +57,23 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
         }
     }
 
+
+    @Override
     public String addPedido(PedidoDB pedido) {
         try {
             MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
 
             pedido.setEstado(EstadoPedido.EN_PREPARACION.name());
-            Document pedidoDocument = (Document) mongoTemplate.getConverter().convertToMongoType(pedido); //todo mapear asi los objetos
-            collection.insertOne(pedidoDocument);
-            ObjectId generatedObjectId = pedidoDocument.getObjectId(Constantes._ID);
-            pedidoIdManager.anadirPedidoObjectId(generatedObjectId);
-            log.info(ConstantesInfo.PEDIDO_ANADIDO_ + pedidoIdManager.getPedidoId(pedido.get_id()) + ", " + pedido.get_id());
+           // Document pedidoDocument = Document.parse(gson.toJson(pedido));
+            Document pedidoDocument = (Document) mongoTemplate.getConverter().convertToMongoType(pedido);
+            if (pedidoDocument!= null) {
+                collection.insertOne(pedidoDocument);
+                ObjectId generatedObjectId = pedidoDocument.getObjectId(Constantes._ID);
+                pedidoIdManager.anadirPedidoObjectId(generatedObjectId);
+                log.info(ConstantesInfo.PEDIDO_ANADIDO_ + pedidoIdManager.getPedidoId(pedido.get_id()) + ", " + pedido.get_id());
+            } else {
+                log.error(ConstantesInfo.ERROR_CREANDO_PEDIDO, ConstantesInfo.PEDIDO_NULO);
+            }
         } catch (Exception e) {
             log.error(ConstantesInfo.ERROR_CREANDO_PEDIDO, e.getMessage(), e);
         }
@@ -74,6 +81,7 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
     }
 
 
+    @Override
     public List<PedidoDB> getPedidosByCorreoCliente(String correoCliente) {
         List<PedidoDB> pedidos = new ArrayList<>();
         try {
@@ -87,6 +95,7 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
                     pedidoIdManager.anadirPedidoObjectId(pedido.get_id());
                 }
             });
+            pedidos = pedidos.reversed();
         } catch (Exception e) {
             log.error(ConstantesInfo.ERROR_LEYENDO_PEDIDOS_DE_CLIENTE, e.getMessage(), e);
 
@@ -108,6 +117,7 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
                     pedidoIdManager.anadirPedidoObjectId(pedido.get_id());
                 }
             });
+            pedidos = pedidos.reversed();
         } catch (Exception e) {
             log.error(ConstantesInfo.ERROR_LEYENDO_PEDIDOS_EN_PREPARACION, e.getMessage(), e);
 
@@ -116,16 +126,13 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
     }
 
     @Override
-    public String aceptarPedido(int idPedido, String correoRepartidor) {
+    public String repartirPedido(int idPedido, String correoRepartidor) {
         try {
 
             Query query = new Query();
             query.addCriteria(
-                    Criteria.where(Constantes.REPARTIDOR).is(correoRepartidor)
-                            .and(Constantes.ESTADO).in(
-                                    EstadoPedido.ACEPTADO.toString(),
-                                    EstadoPedido.EN_REPARTO.toString()
-                            )
+                    Criteria.where(Constantes._ID).is(idPedido)
+
             );
 
             List<PedidoDB> pedidos = mongoTemplate.find(query, PedidoDB.class, COLLECTION_NAME);
@@ -134,7 +141,7 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
                 MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
                 collection.updateOne(
                         eq(Constantes._ID, pedidoIdManager.getPedidoObjectId(idPedido)),
-                        set(Constantes.ESTADO, EstadoPedido.ACEPTADO)
+                        set(Constantes.ESTADO, EstadoPedido.EN_REPARTO)
                 );
                 collection.updateOne(
                         eq(Constantes._ID, pedidoIdManager.getPedidoObjectId(idPedido)),
@@ -168,12 +175,12 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
     }
 
     @Override
-    public PedidoDB getPedidoAceptado(String correoRepartidor) {
+    public PedidoDB getPedidoEnRepartoByRepartidor(String correoRepartidor) {
         PedidoDB pedidoDB = null;
         try {
             Query query = new Query();
             query.addCriteria(Criteria.where(Constantes.REPARTIDOR).is(correoRepartidor)
-                    .and(Constantes.ESTADO).is(EstadoPedido.ACEPTADO.name()));
+                    .and(Constantes.ESTADO).is(EstadoPedido.EN_REPARTO.name()));
             pedidoDB = mongoTemplate.findOne(query, PedidoDB.class, COLLECTION_NAME);
             if (pedidoDB == null) {
                 log.info(ConstantesInfo.REPARTIDOR_SIN_PEDIDOS_ACEPTADOS);
@@ -198,6 +205,7 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
                     pedidoIdManager.anadirPedidoObjectId(pedido.get_id());
                 }
             });
+            pedidos = pedidos.reversed();
         } catch (Exception e) {
             log.error(ConstantesInfo.ERROR_LEYENDO_PEDIDOS_DE_REPARTIDOR, e.getMessage(), e);
 
@@ -231,13 +239,14 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
             );
             collection.updateOne(
                     eq(Constantes._ID, pedidoIdManager.getPedidoObjectId(idPedido)),
-                    set(Constantes.REPARTIDOR, null)
+                    unset(Constantes.REPARTIDOR)
             );
             log.info(Constantes.PEDIDO + " " + idPedido + Constantes.EN_PREPARACION);
         } catch (Exception e) {
             log.error(ConstantesInfo.ERROR_ACTUALIZANDO_PEDIDO_, e.getMessage(), e);
             return ConstantesInfo.ERROR_ACTUALIZANDO_PEDIDO;
         }
-        return ConstantesInfo.PEDIDO_SIN_REPARTIDOR;    }
+        return ConstantesInfo.PEDIDO_SIN_REPARTIDOR;
+    }
 }
 

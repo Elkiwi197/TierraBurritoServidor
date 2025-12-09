@@ -1,5 +1,8 @@
 package com.tierraburritoservidor.errors;
 
+import lombok.Getter;
+
+@Getter
 public class ApiError {
 
     private final String message;
@@ -8,7 +11,4 @@ public class ApiError {
         this.message = message;
     }
 
-    public String getMessage() {
-        return message;
-    }
 }

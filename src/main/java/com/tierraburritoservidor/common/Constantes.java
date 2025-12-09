@@ -21,9 +21,14 @@ public class Constantes {
     public static final String NOMBRE = "nombre";
     public static final String CORREO = "correo";
     public static final String ACTIVADO = "activado";
-    public static final String PLATOS_MIN = "platos";
     public static final String SHA_512 = "SHA-512";
     public static final String EN_PREPARACION = " en preparacion";
+    public static final String COLECCION_INGREDIENTES = "Ingredientes";
+    public static final String COLECCION_PEDIDOS = "Pedidos";
+    public static final String COLECCION_PLATOS = "Platos";
+    public static final String COLECCION_USUARIOS = "Usuarios";
+    public static final String CODIGO_ACTIVACION = "codigoActivacion";
+    public static final String BASE_DE_DATOS = "spring.data.mongodb.uri";
 
     private Constantes() {
     }

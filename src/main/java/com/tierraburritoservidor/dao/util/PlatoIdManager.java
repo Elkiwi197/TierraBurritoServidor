@@ -1,5 +1,6 @@
 package com.tierraburritoservidor.dao.util;
 
+import jakarta.inject.Singleton;
 import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Component;

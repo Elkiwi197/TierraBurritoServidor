@@ -24,13 +24,16 @@ public class ConstantesInfo {
     public static final String PEDIDO_SIN_REPARTIDOR = "Pedido sin repartidor";
     public static final String ERROR_ACTUALIZANDO_PEDIDO = "Error actualizando pedido";
     public static final String ERROR_CANCELANDO_PEDIDO_ = "Error cancelando pedido: ";
+    public static final String ERROR_INICIALIZANDO_INGREDIENTES = "Error inicializando ingredientes";
+    public static final String ERROR_INICIALIZANDO_PLATOS = "Error inicializando platos";
+    public static final String ERROR_INICIALIZANDO_USUARIOS = "Error inicializando usuarios";
+    public static final String  PEDIDO_NULO = "El pedido es nulo";
 
     private ConstantesInfo() {
     }
 
 
 
-    public static final String ERROR_NO_REPARTIENDO_PEDIDO = "Error";
     public static final String ERROR_CANCELANDO_PEDIDO = "Error cancelando pedido";
     public static final String ERROR_ENTREGANDO_PEDIDO = "Error entregando pedido";
     public static final String ERROR_ACEPTANDO_PEDIDO = "Error aceptando pedido";
@@ -41,14 +44,13 @@ public class ConstantesInfo {
 
 
     public static final String TOKEN_NO_PROPORCIONADO = "Token no proporcionado o formato incorrecto";
-    public static final String TOKEN_CADUCADO = "Token caducado";
     public static final String CORREO_YA_EXISTE = "Ya existe una cuenta con este correo";
     public static final String USUARIO_O_CONTRASENA_INCORRECTOS = "Usuario o contraseña incorrectos";
     public static final String USUARIO_NO_ENCONTRADO = "Usuario no encontrado";
     public static final String PEDIDO_NO_ENCONTRADO = "Pedido no encontrado";
     public static final String PEDIDOS_NO_ENCONTRADOS = "Pedidos no encontrados";
     public static final String PLATO_NO_ENCONTRADO = "Plato no encontrado";
-    public static final String PRODUCTO_NO_ENCONTRADO = "Producto no encontrado";
+    public static final String INGREDIENTE_NO_ENCONTRADO = "Ingrediente no encontrado";
     public static final String NO_SE_PUDO_MANDAR_CORREO = "Error mandando el correo de activación";
     public static final String USUARIO_NO_ACTIVADO = "Usuario no activado";
     public static final String USUARIO_YA_ACTIVADO = "Usuario ya activado";
@@ -64,9 +66,7 @@ public class ConstantesInfo {
     public static final String PEDIDO_CANCELADO = "Pedido cancelado";
     public static final String PEDIDO_ENTREGADO = "Pedido entregado";
     public static final String USUARIO_CREADO = "Usuario creado, active su cuenta mediante su correo electrónico";
-    public static final String SHA_512 = "SHA-512";
     public static final String USUARIO_ACTIVADO = "Usuario activado";
-    public static final String USUARIO_AUTENTICADO = "Usuario autenticado:";
     public static final String PEDIDO_ANADIDO_ = "Pedido añadido:";
     public static final String PEDIDO_ACEPTADO_POR = "Pedido aceptado por";
     public static final String CANCELADO_POR = " cancelado por";

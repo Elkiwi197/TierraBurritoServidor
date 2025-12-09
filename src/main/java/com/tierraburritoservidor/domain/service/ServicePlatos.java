@@ -2,12 +2,12 @@
 package com.tierraburritoservidor.domain.service;
 
 import com.tierraburritoservidor.dao.model.PlatoDB;
-import com.tierraburritoservidor.dao.model.ProductoDB;
+import com.tierraburritoservidor.dao.model.IngredienteDB;
+import com.tierraburritoservidor.dao.repositories.RepositoryIngredientes;
 import com.tierraburritoservidor.dao.repositories.RepositoryPlatos;
-import com.tierraburritoservidor.dao.repositories.RepositoryProductos;
 import com.tierraburritoservidor.dao.util.PlatoIdManager;
+import com.tierraburritoservidor.domain.model.Ingrediente;
 import com.tierraburritoservidor.domain.model.Plato;
-import com.tierraburritoservidor.domain.model.Producto;
 import com.tierraburritoservidor.domain.util.DatabaseUiParser;
 import com.tierraburritoservidor.errors.exceptions.PlatoNoEncontradoException;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import java.util.List;
 public class ServicePlatos {
 
     private final RepositoryPlatos repositoryPlatos;
-    private final RepositoryProductos repositoryProductos;
+    private final RepositoryIngredientes repositoryIngredientes;
     private final PlatoIdManager platoIdManager;
     private final DatabaseUiParser databaseUiParser;
 
@@ -31,10 +31,10 @@ public class ServicePlatos {
         List<Plato> platos = new ArrayList<>();
         platosDB.forEach(p -> {
             Plato plato = databaseUiParser.platoDBtoPlato(p);
-            List<Producto> ingredientes = new ArrayList<>();
+            List<Ingrediente> ingredientes = new ArrayList<>();
             p.getIngredientes().forEach(objectId ->
-                    ingredientes.add(databaseUiParser.productoDBtoProducto(
-                            repositoryProductos.getProductoByObjectId(objectId))));
+                    ingredientes.add(databaseUiParser.ingredienteDBtoIngrediente(
+                            repositoryIngredientes.getIngredienteByObjectId(objectId))));
             plato.setIngredientes(ingredientes);
             platos.add(plato);
         });
@@ -47,15 +47,15 @@ public class ServicePlatos {
         if (platoDB == null) {
             throw new PlatoNoEncontradoException();
         }
-        List<Producto> ingredientes = new ArrayList<>();
-        List<Producto> extras = new ArrayList<>();
+        List<Ingrediente> ingredientes = new ArrayList<>();
+        List<Ingrediente> extras = new ArrayList<>();
         Plato plato = databaseUiParser.platoDBtoPlato(platoDB);
         platoDB.getIngredientes().forEach(objectId ->
-                ingredientes.add(databaseUiParser.productoDBtoProducto(
-                        repositoryProductos.getProductoByObjectId(objectId))));
+                ingredientes.add(databaseUiParser.ingredienteDBtoIngrediente(
+                        repositoryIngredientes.getIngredienteByObjectId(objectId))));
         plato.setIngredientes(ingredientes);
-        List<ProductoDB> extrasDB = repositoryProductos.getExtrasByPlatoDB(platoDB);
-        extrasDB.forEach(e -> extras.add(databaseUiParser.productoDBtoProducto(e)));
+        List<IngredienteDB> extrasDB = repositoryIngredientes.getExtrasByPlatoDB(platoDB);
+        extrasDB.forEach(e -> extras.add(databaseUiParser.ingredienteDBtoIngrediente(e)));
         plato.setIngredientes(ingredientes);
         plato.setExtras(extras);
         return plato;

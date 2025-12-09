@@ -21,7 +21,6 @@ public class ServiceUsuarios {
     private final PasswordEncoder passwordEncoder;
 
     public void comprobarCredenciales(String correo, String contrasena) {
-        repositoryUsuarios.cargarIdsUsuarios();
         UsuarioDB usuarioDB = repositoryUsuarios.getUsuarioByCorreo(correo);
         if (usuarioDB != null) {
             if (!usuarioDB.isActivado()) {
@@ -69,7 +68,6 @@ public class ServiceUsuarios {
     }
 
     public Usuario getUsuarioByCorreo(String correo) {
-        repositoryUsuarios.getUsuariosActivados();
         UsuarioDB usuarioDB = repositoryUsuarios.getUsuarioByCorreo(correo);
         if (usuarioDB != null) {
             return databaseUiParser.usuarioDbToUsuario(usuarioDB);

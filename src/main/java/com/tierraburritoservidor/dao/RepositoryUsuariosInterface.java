@@ -5,6 +5,8 @@ import com.tierraburritoservidor.dao.model.UsuarioDB;
 import java.util.List;
 
 public interface RepositoryUsuariosInterface {
+    void inicializarUsuarios();
+
     void crearUsuarioDesactivado(UsuarioDB usuario);
 
     UsuarioDB getUsuarioByCorreo(String correo);
@@ -15,5 +17,4 @@ public interface RepositoryUsuariosInterface {
 
     List<UsuarioDB> getUsuariosActivados();
 
-    void cargarIdsUsuarios();
 }

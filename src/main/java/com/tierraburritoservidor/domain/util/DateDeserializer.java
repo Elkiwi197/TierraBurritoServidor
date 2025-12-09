@@ -15,7 +15,6 @@ public class DateDeserializer extends JsonDeserializer<LocalDateTime> {
     @Override
     public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         String date = p.getText();
-        // Trunca a milisegundos si hay microsegundos
         if (date.contains(".")) {
             int dotIndex = date.indexOf(".");
             String secondsFraction = date.substring(dotIndex + 1);

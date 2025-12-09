@@ -51,8 +51,8 @@ public class ExceptionHandlers {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
     }
 
-    @ExceptionHandler(ProductoNoEncontradoException.class)
-    public ResponseEntity<ApiError> handleException(ProductoNoEncontradoException e) {
+    @ExceptionHandler(IngredienteNoEncontradoException.class)
+    public ResponseEntity<ApiError> handleException(IngredienteNoEncontradoException e) {
         ApiError apiError = new ApiError(e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
     }

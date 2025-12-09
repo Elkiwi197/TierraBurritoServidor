@@ -7,16 +7,21 @@ import com.mongodb.client.model.Filters;
 import com.tierraburritoservidor.common.Constantes;
 import com.tierraburritoservidor.common.ConstantesInfo;
 import com.tierraburritoservidor.dao.RepositoryUsuariosInterface;
+import com.tierraburritoservidor.dao.model.PedidoDB;
 import com.tierraburritoservidor.dao.model.UsuarioDB;
 import com.tierraburritoservidor.dao.util.DocumentPojoParser;
 import com.tierraburritoservidor.dao.util.UserIdManager;
 import com.tierraburritoservidor.errors.exceptions.CorreoYaExisteException;
 import com.tierraburritoservidor.errors.exceptions.UsuarioNoEncontradoException;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -25,13 +30,14 @@ import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.set;
+import static com.mongodb.client.model.Updates.unset;
 
 @Log4j2
 @Repository
 @RequiredArgsConstructor
 public class RepositoryUsuarios implements RepositoryUsuariosInterface {
 
-    private final String COLLECTION_NAME = Constantes.USUARIOS;
+    private final String COLLECTION_NAME = Constantes.COLECCION_USUARIOS;
 
     private final DocumentPojoParser documentPojoParser;
     private final UserIdManager userIdManager;
@@ -40,6 +46,25 @@ public class RepositoryUsuarios implements RepositoryUsuariosInterface {
     private final MongoTemplate mongoTemplate;
 
 
+    @EventListener(ApplicationReadyEvent.class)
+    @Override
+    public void inicializarUsuarios() {
+        try {
+            List<UsuarioDB> usuarios = new ArrayList<>();
+            Query query = new Query();
+            usuarios = mongoTemplate.find(query, UsuarioDB.class, COLLECTION_NAME);
+
+            usuarios.forEach(usuario -> {
+                if (userIdManager.getId(usuario.get_id()) == null) {
+                    userIdManager.anadirObjectId(usuario.get_id());
+                }
+            });
+        } catch (Exception e) {
+            log.error(ConstantesInfo.ERROR_INICIALIZANDO_USUARIOS, e.getMessage(), e);
+        }
+    }
+
+    @Override
     public List<UsuarioDB> getUsuariosActivados() {
         List<UsuarioDB> usuarios = new ArrayList<>();
         try {
@@ -57,28 +82,16 @@ public class RepositoryUsuarios implements RepositoryUsuariosInterface {
         return usuarios;
     }
 
-    @Override
-    public void cargarIdsUsuarios() {
-        try {
-            MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
-            List<Document> documents = collection.find().into(new ArrayList<>());
-            HashMap<ObjectId, Integer> newIds = new HashMap<>();
-            documents.forEach(document ->
-                newIds.put(document.getObjectId(Constantes._ID), newIds.size() + 1)
-            );
-            userIdManager.setUserIds(newIds);
-        } catch (Exception e) {
-            log.error(ConstantesInfo.ERROR_LEYENDO_USUARIOS, e.getMessage(), e);
-        }
-    }
 
+    @Override
     public void crearUsuarioDesactivado(UsuarioDB usuario) {
+        MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
+        Document existingUser = collection.find(Filters.eq(Constantes.CORREO, usuario.getCorreo())).first();
+        if (existingUser != null) {
+            throw new CorreoYaExisteException();
+        }
+
         try {
-            MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
-            Document existingUser = collection.find(Filters.eq(Constantes.CORREO, usuario.getCorreo())).first();
-            if (existingUser != null) {
-                throw new CorreoYaExisteException();
-            }
             Document usuarioDocument = Document.parse(gson.toJson(usuario));
             collection.insertOne(usuarioDocument);
             ObjectId generatedObjectId = usuarioDocument.getObjectId(Constantes._ID);
@@ -90,6 +103,8 @@ public class RepositoryUsuarios implements RepositoryUsuariosInterface {
     }
 
 
+
+    @Override
     public UsuarioDB getUsuarioByCorreo(String correo) {
         try {
             Document document = mongoTemplate.getCollection(COLLECTION_NAME)
@@ -110,6 +125,7 @@ public class RepositoryUsuarios implements RepositoryUsuariosInterface {
     }
 
 
+    @Override
     public void activarUsuario(int id) {
         try {
             MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
@@ -117,12 +133,17 @@ public class RepositoryUsuarios implements RepositoryUsuariosInterface {
                     eq(Constantes._ID, userIdManager.getObjectId(id)),
                     set(Constantes.ACTIVADO, true)
             );
+            collection.updateOne(
+                    eq(Constantes._ID, userIdManager.getObjectId(id)),
+                    unset(Constantes.CODIGO_ACTIVACION)
+            );
         } catch (Exception e) {
             log.error(ConstantesInfo.ERROR_ACTIVANDO_USUARIO, e.getMessage(), e);
         }
     }
 
 
+    @Override
     public UsuarioDB getUsuarioById(int id) {
         UsuarioDB usuario = new UsuarioDB();
         try {
