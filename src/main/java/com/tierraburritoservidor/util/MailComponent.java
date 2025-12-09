@@ -34,7 +34,7 @@ public class MailComponent {
         message.setTo(destinatario);
         message.setSubject(asunto);
         String ip = configurationProperties.getIp();
-        message.setText("<html><a href=\"http://" + ip + ":8080/signup/activar/" + idUsuario + "?codigo=" + codigo + "\">ACTIVAR CUENTA</a></html>");
+        message.setText("Haga clic sobre \"http://" + ip + ":8080/signup/activar/" + idUsuario + "?codigo=" + codigo + "\" para activar su cuenta");
         try {
             javaMailSender.send(message);
         } catch (MailException e) {
