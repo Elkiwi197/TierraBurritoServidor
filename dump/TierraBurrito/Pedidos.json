@@ -1,0 +1,87 @@
+[{
+  "_id": {
+    "$oid": "6937047d3ffe1a7402bd31ce"
+  },
+  "direccion": "calle Suecia 5",
+  "correoCliente": "cliente@correo.com",
+  "platos": [
+    {
+      "_id": {
+        "$oid": "6937047d3ffe1a7402bd31cd"
+      },
+      "nombre": "Burrito",
+      "ingredientes": [
+        {
+          "$oid": "68c94e2c46dcb90c93986245"
+        },
+        {
+          "$oid": "68c94e2c46dcb90c9398624b"
+        },
+        {
+          "$oid": "68c94e2c46dcb90c9398624d"
+        },
+        {
+          "$oid": "68c94e2c46dcb90c9398624f"
+        },
+        {
+          "$oid": "68c94e2c46dcb90c93986253"
+        }
+      ],
+      "extras": [
+        {
+          "$oid": "68c94e2c46dcb90c93986245"
+        },
+        {
+          "$oid": "68c94e2c46dcb90c93986246"
+        },
+        {
+          "$oid": "68c94e2c46dcb90c93986248"
+        },
+        {
+          "$oid": "68c94e2c46dcb90c9398624b"
+        },
+        {
+          "$oid": "68c94e2c46dcb90c9398624c"
+        },
+        {
+          "$oid": "68c94e2c46dcb90c9398624d"
+        },
+        {
+          "$oid": "68c94e2c46dcb90c9398624f"
+        },
+        {
+          "$oid": "68c94e2c46dcb90c93986250"
+        },
+        {
+          "$oid": "68c94e2c46dcb90c93986251"
+        },
+        {
+          "$oid": "68c94e2c46dcb90c93986255"
+        },
+        {
+          "$oid": "68c94e2c46dcb90c93986254"
+        },
+        {
+          "$oid": "68c94e2c46dcb90c93986253"
+        },
+        {
+          "$oid": "68c94e2c46dcb90c93986252"
+        },
+        {
+          "$oid": "68c94e2c46dcb90c93986257"
+        },
+        {
+          "$oid": "68c94e2c46dcb90c93986256"
+        }
+      ],
+      "precio": 23.49,
+      "rutaFoto": "https://www.tierraburritos.com/wp-content/uploads/14_Burrito.jpg"
+    }
+  ],
+  "precio": 23.49,
+  "estado": "ENTREGADO",
+  "horaLlegada": {
+    "$date": "2025-12-08T17:16:20.870Z"
+  },
+  "repartidor": "repartidor@correo.com"
+}]

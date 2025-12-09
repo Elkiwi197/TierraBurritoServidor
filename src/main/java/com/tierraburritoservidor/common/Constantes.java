@@ -7,6 +7,7 @@ public class Constantes {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String BEARER = "Bearer ";
     public static final String CLAVE = "clave";
+    public static final String IP = "ip";
     public static final String APPLICATION_PROPERTIES = "application.properties";
     public static final String PEDIDOS = "Pedidos";
     public static final String PLATOS = "Platos";

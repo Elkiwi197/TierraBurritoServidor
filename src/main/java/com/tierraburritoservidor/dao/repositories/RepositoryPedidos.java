@@ -1,7 +1,5 @@
 package com.tierraburritoservidor.dao.repositories;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mongodb.client.MongoCollection;
 import com.tierraburritoservidor.common.Constantes;
 import com.tierraburritoservidor.common.ConstantesInfo;
@@ -9,7 +7,6 @@ import com.tierraburritoservidor.dao.RepositoryPedidosInterface;
 import com.tierraburritoservidor.dao.model.PedidoDB;
 import com.tierraburritoservidor.dao.util.PedidoIdManager;
 import com.tierraburritoservidor.domain.model.EstadoPedido;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.bson.Document;
@@ -43,9 +40,8 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
     @Override
     public void inicializarPedidos() {
         try {
-            List<PedidoDB> pedidos = new ArrayList<>();
             Query query = new Query();
-            pedidos = mongoTemplate.find(query, PedidoDB.class, COLLECTION_NAME);
+            List<PedidoDB> pedidos = mongoTemplate.find(query, PedidoDB.class, COLLECTION_NAME);
 
             pedidos.forEach(pedido -> {
                 if (pedidoIdManager.getPedidoId(pedido.get_id()) == null) {
@@ -64,7 +60,6 @@ public class RepositoryPedidos implements RepositoryPedidosInterface {
             MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
 
             pedido.setEstado(EstadoPedido.EN_PREPARACION.name());
-           // Document pedidoDocument = Document.parse(gson.toJson(pedido));
             Document pedidoDocument = (Document) mongoTemplate.getConverter().convertToMongoType(pedido);
             if (pedidoDocument!= null) {
                 collection.insertOne(pedidoDocument);

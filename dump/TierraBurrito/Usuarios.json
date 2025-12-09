@@ -1,0 +1,21 @@
+[{
+  "_id": {
+    "$oid": "69220b375c0d84593a24678f"
+  },
+  "nombre": "Iván",
+  "contrasena": "$2a$10$weXyViOTg4FSWO08lHrGK.JsNfUo9LJWgu88T.SVqIJGBjMYNyU.W",
+  "correo": "repartidor@correo.com",
+  "tipoUsuario": "REPARTIDOR",
+  "activado": true
+},
+{
+  "_id": {
+    "$oid": "6931c5c12d291c0b06959631"
+  },
+  "nombre": "Sergio",
+  "contrasena": "$2a$10$tvigm1L/pGKxzHNoYY.1w.KTfgVbxFAdXFqy3j1MZGm2ptjANduEK",
+  "correo": "cliente@correo.com",
+  "tipoUsuario": "CLIENTE",
+  "activado": true,
+  "codigoActivacion": "4eudLnrL6_iGBoSQDcmh_Q=="
+}]

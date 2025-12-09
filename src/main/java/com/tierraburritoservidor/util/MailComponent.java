@@ -1,6 +1,7 @@
 package com.tierraburritoservidor.util;
 
 import com.tierraburritoservidor.common.ConstantesInfo;
+import com.tierraburritoservidor.config.ConfigurationProperties;
 import com.tierraburritoservidor.errors.exceptions.CorreoException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 @Log4j2
 public class MailComponent {
 
+    private final ConfigurationProperties configurationProperties;
     @Value(value = "${app.subject}")
     private String asunto;
     @Value(value = "${spring.mail.username}")
@@ -21,8 +23,9 @@ public class MailComponent {
 
     private final JavaMailSender javaMailSender;
 
-    public MailComponent(JavaMailSender javaMailSender) {
+    public MailComponent(JavaMailSender javaMailSender, ConfigurationProperties configurationProperties) {
         this.javaMailSender = javaMailSender;
+        this.configurationProperties = configurationProperties;
     }
 
     public void mandarCorreoActivacion(String destinatario, int idUsuario, String codigo) {
@@ -30,19 +33,14 @@ public class MailComponent {
         message.setFrom(remitente);
         message.setTo(destinatario);
         message.setSubject(asunto);
-        //todo cambiar a IP definitiva
-        message.setText("<html><a href=\"http://192.168.100.138:8080/signup/activar/"+idUsuario+"?codigo="+codigo+"\">ACTIVAR CUENTA</a></html>");
+        String ip = configurationProperties.getIp();
+        message.setText("<html><a href=\"http://" + ip + ":8080/signup/activar/" + idUsuario + "?codigo=" + codigo + "\">ACTIVAR CUENTA</a></html>");
         try {
             javaMailSender.send(message);
-        } catch(MailAuthenticationException e){
-            log.warn(ConstantesInfo.CORREO_NO_EXISTE);
-            e.printStackTrace();
         } catch (MailException e) {
             log.error(e.getMessage());
-           throw new CorreoException();
+            throw new CorreoException();
         }
 
     }
-
-
 }

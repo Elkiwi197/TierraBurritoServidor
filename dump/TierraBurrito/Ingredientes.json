@@ -1,0 +1,160 @@
+[{
+  "_id": {
+    "$oid": "68c94e2c46dcb90c93986244"
+  },
+  "nombre": "ARROZ_BLANCO",
+  "precio": 0,
+  "rutafoto": "https://www.tierraburritos.com/wp-content/uploads/ArrozBlanco-1140x1050.png"
+},
+{
+  "_id": {
+    "$oid": "68c94e2c46dcb90c93986245"
+  },
+  "nombre": "ARROZ_INTEGRAL",
+  "precio": 0,
+  "rutafoto": "https://www.tierraburritos.com/wp-content/uploads/ArrozIntegral-1140x1050.png"
+},
+{
+  "_id": {
+    "$oid": "68c94e2c46dcb90c93986246"
+  },
+  "nombre": "CARNE_BBQ",
+  "precio": 3.4,
+  "rutafoto": "https://www.tierraburritos.com/wp-content/uploads/Carnitas-1-1-1140x1050.jpg"
+},
+{
+  "_id": {
+    "$oid": "68c94e2c46dcb90c93986247"
+  },
+  "nombre": "CARNITAS",
+  "precio": 3.6,
+  "rutafoto": "https://www.tierraburritos.com/wp-content/uploads/Carnitas-1-1140x1050.jpg"
+},
+{
+  "_id": {
+    "$oid": "68c94e2c46dcb90c93986248"
+  },
+  "nombre": "CREMA_AGRIA",
+  "precio": 0,
+  "rutafoto": "https://www.tierraburritos.com/wp-content/uploads/SalsaAgria-1140x1050.jpg"
+},
+{
+  "_id": {
+    "$oid": "68c94e2c46dcb90c93986249"
+  },
+  "nombre": "FRIJOLES",
+  "precio": 0,
+  "rutafoto": "https://www.tierraburritos.com/wp-content/uploads/Frijoles-1-1140x1050.jpg"
+},
+{
+  "_id": {
+    "$oid": "68c94e2c46dcb90c9398624a"
+  },
+  "nombre": "GUACAMOLE",
+  "precio": 2.5,
+  "rutafoto": "https://www.tierraburritos.com/wp-content/uploads/Guacamole-1140x1050.png"
+},
+{
+  "_id": {
+    "$oid": "68c94e2c46dcb90c9398624b"
+  },
+  "nombre": "JALAPENOS",
+  "precio": 0,
+  "rutafoto": "https://www.tierraburritos.com/wp-content/uploads/chipotle-1140x1050.png"
+},
+{
+  "_id": {
+    "$oid": "68c94e2c46dcb90c9398624c"
+  },
+  "nombre": "LECHUGA",
+  "precio": 0,
+  "rutafoto": "https://www.tierraburritos.com/wp-content/uploads/Ensalada-1140x1050.jpg"
+},
+{
+  "_id": {
+    "$oid": "68c94e2c46dcb90c9398624d"
+  },
+  "nombre": "MAIZ",
+  "precio": 0,
+  "rutafoto": "https://www.tierraburritos.com/wp-content/uploads/Maiz-1-1140x1050.jpg"
+},
+{
+  "_id": {
+    "$oid": "68c94e2c46dcb90c9398624e"
+  },
+  "nombre": "PICO_DE_GALLO",
+  "precio": 0,
+  "rutafoto": "https://www.tierraburritos.com/wp-content/uploads/Picodegallo-1140x1050.jpg"
+},
+{
+  "_id": {
+    "$oid": "68c94e2c46dcb90c9398624f"
+  },
+  "nombre": "POLLO",
+  "precio": 3.2,
+  "rutafoto": "https://www.tierraburritos.com/wp-content/uploads/Pollo-1-1140x1050.jpg"
+},
+{
+  "_id": {
+    "$oid": "68c94e2c46dcb90c93986250"
+  },
+  "nombre": "QUESO_RALLADO",
+  "precio": 0,
+  "rutafoto": "https://www.tierraburritos.com/wp-content/uploads/Queso-1140x1050.jpg"
+},
+{
+  "_id": {
+    "$oid": "68c94e2c46dcb90c93986251"
+  },
+  "nombre": "SALSA_666",
+  "precio": 0,
+  "rutafoto": "https://www.tierraburritos.com/wp-content/uploads/Salsa666-1140x1050.jpg"
+},
+{
+  "_id": {
+    "$oid": "68c94e2c46dcb90c93986252"
+  },
+  "nombre": "SALSA_CHIPOTLE",
+  "precio": 0,
+  "rutafoto": "https://www.tierraburritos.com/wp-content/uploads/Salsachipotle-1140x1050.jpg"
+},
+{
+  "_id": {
+    "$oid": "68c94e2c46dcb90c93986253"
+  },
+  "nombre": "STEAK",
+  "precio": 3.9,
+  "rutafoto": "https://www.tierraburritos.com/wp-content/uploads/Steak-1140x1050.png"
+},
+{
+  "_id": {
+    "$oid": "68c94e2c46dcb90c93986254"
+  },
+  "nombre": "SALSA_MEDIA",
+  "precio": 0,
+  "rutafoto": "https://www.tierraburritos.com/wp-content/uploads/SalsaMedia-1140x1050.jpg"
+},
+{
+  "_id": {
+    "$oid": "68c94e2c46dcb90c93986255"
+  },
+  "nombre": "SALSA_VERDE",
+  "precio": 0,
+  "rutafoto": "https://www.tierraburritos.com/wp-content/uploads/SalsaVerde-1140x1050.jpg"
+},
+{
+  "_id": {
+    "$oid": "68c94e2c46dcb90c93986256"
+  },
+  "nombre": "SALSA_DE_QUESO",
+  "precio": 0,
+  "rutafoto": "https://www.tierraburritos.com/wp-content/uploads/SalsaQueso-1140x1050.jpg"
+},
+{
+  "_id": {
+    "$oid": "68c94e2c46dcb90c93986257"
+  },
+  "nombre": "VERDURAS",
+  "precio": 0,
+  "rutafoto": "https://www.tierraburritos.com/wp-content/uploads/Verduras-1140x1050.png"
+}]

@@ -16,6 +16,8 @@ public class ConfigurationProperties {
 
     private String clave;
     private String baseDeDatos;
+    private String ip;
+
 
     private static ConfigurationProperties configuracion;
 
@@ -34,6 +36,7 @@ public class ConfigurationProperties {
                     .getResourceAsStream(Constantes.APPLICATION_PROPERTIES));
             this.clave = p.getProperty(Constantes.CLAVE);
             this.baseDeDatos = p.getProperty(Constantes.BASE_DE_DATOS);
+            this.ip = p.getProperty(Constantes.IP);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }

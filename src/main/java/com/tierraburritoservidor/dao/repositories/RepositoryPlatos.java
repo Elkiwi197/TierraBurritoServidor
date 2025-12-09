@@ -10,7 +10,6 @@ import com.tierraburritoservidor.dao.util.DocumentPojoParser;
 import com.tierraburritoservidor.dao.util.IngredienteIdManager;
 import com.tierraburritoservidor.dao.util.PlatoIdManager;
 import com.tierraburritoservidor.errors.exceptions.PlatoNoEncontradoException;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.bson.Document;
@@ -42,9 +41,8 @@ public class RepositoryPlatos implements RepositoryPlatosInterface {
     @Override
     public void inicializarPlatos() {
         try {
-            List<PlatoDB> platos = new ArrayList<>();
             Query query = new Query();
-            platos = mongoTemplate.find(query, PlatoDB.class, COLLECTION_NAME);
+            List<PlatoDB> platos = mongoTemplate.find(query, PlatoDB.class, COLLECTION_NAME);
 
             platos.forEach(plato -> {
                 if (platoIdManager.getId(plato.get_id()) == null) {
@@ -62,7 +60,6 @@ public class RepositoryPlatos implements RepositoryPlatosInterface {
         try {
             MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
             List<Document> documents = collection.find().into(new ArrayList<>());
-            HashMap<ObjectId, Integer> newPlatoIds = new HashMap<>();
             HashMap<ObjectId, Integer> newProductoIds = new HashMap<>();
             documents.forEach(document -> {
                 PlatoDB plato = documentPojoParser.documentToPlatoDB(document);
@@ -102,7 +99,7 @@ public class RepositoryPlatos implements RepositoryPlatosInterface {
         } catch (Exception e) {
             log.error(ConstantesInfo.ERROR_LEYENDO_PLATO_POR_ID, e.getMessage(), e);
         }
-        if (plato == null){
+        if (plato == null) {
             throw new PlatoNoEncontradoException();
         }
         return plato;

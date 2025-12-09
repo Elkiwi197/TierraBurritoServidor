@@ -11,7 +11,6 @@ import com.tierraburritoservidor.dao.model.PlatoDB;
 import com.tierraburritoservidor.dao.util.DocumentPojoParser;
 import com.tierraburritoservidor.dao.util.IngredienteIdManager;
 import com.tierraburritoservidor.errors.exceptions.IngredienteNoEncontradoException;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.bson.Document;
@@ -33,7 +32,6 @@ public class RepositoryIngredientes implements RepositoryIngredientesInterface {
 
 
     private final String COLLECTION_NAME = Constantes.COLECCION_INGREDIENTES;
-
     private final DocumentPojoParser documentPojoParser;
     private final IngredienteIdManager ingredienteIdManager;
     private final MongoTemplate mongoTemplate;
@@ -43,10 +41,8 @@ public class RepositoryIngredientes implements RepositoryIngredientesInterface {
     @Override
     public void inicializarIngredientes() {
         try {
-            List<IngredienteDB> ingredientes = new ArrayList<>();
             Query query = new Query();
-            ingredientes = mongoTemplate.find(query, IngredienteDB.class, COLLECTION_NAME);
-
+            List<IngredienteDB> ingredientes = mongoTemplate.find(query, IngredienteDB.class, COLLECTION_NAME);
             ingredientes.forEach(ingrediente -> {
                 if (ingredienteIdManager.getId(ingrediente.get_id()) == null) {
                     ingredienteIdManager.anadirObjectId(ingrediente.get_id());
@@ -63,9 +59,8 @@ public class RepositoryIngredientes implements RepositoryIngredientesInterface {
         try {
             MongoCollection<Document> collection = mongoTemplate.getCollection(COLLECTION_NAME);
             List<Document> documents = collection.find().into(new ArrayList<>());
-            documents.forEach(document -> {
-                productos.add(documentPojoParser.documentToProductoDB(document));
-            });
+            documents.forEach(document ->
+                    productos.add(documentPojoParser.documentToProductoDB(document)));
         } catch (Exception e) {
             log.error(ConstantesInfo.ERROR_LEYENDO_PRODUCTOS, e.getMessage(), e);
         }
@@ -87,7 +82,7 @@ public class RepositoryIngredientes implements RepositoryIngredientesInterface {
             log.error(ConstantesInfo.ERROR_LEYENDO_PRODUCTO_POR_NOMBRE, e.getMessage(), e);
 
         }
-        if (producto == null){
+        if (producto == null) {
             throw new IngredienteNoEncontradoException();
         }
         return producto;

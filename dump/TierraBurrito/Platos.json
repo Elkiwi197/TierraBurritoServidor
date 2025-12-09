@@ -1,0 +1,137 @@
+[{
+  "_id": {
+    "$oid": "68c9524f46dcb90c9398626d"
+  },
+  "nombre": "Nachos",
+  "precio": 5.99,
+  "rutaFoto": "https://www.tierraburritos.com/wp-content/uploads/02_Nachos-1.jpg",
+  "ingredientes": [
+    {
+      "$oid": "68c94e2c46dcb90c93986248"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c93986249"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c9398624a"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c9398624e"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c93986256"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "68c953bf46dcb90c93986271"
+  },
+  "nombre": "Burrito",
+  "precio": 12.99,
+  "rutaFoto": "https://www.tierraburritos.com/wp-content/uploads/14_Burrito.jpg",
+  "ingredientes": [
+    {
+      "$oid": "68c94e2c46dcb90c93986244"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c93986247"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c93986249"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c9398624a"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c9398624e"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "68c9555e46dcb90c93986274"
+  },
+  "nombre": "Tacos",
+  "precio": 8.99,
+  "rutaFoto": "https://www.tierraburritos.com/wp-content/uploads/10_Tacos-1.jpg",
+  "ingredientes": [
+    {
+      "$oid": "68c94e2c46dcb90c93986247"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c9398624a"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c9398624e"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c93986250"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c93986256"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c93986257"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "68c9560f46dcb90c93986276"
+  },
+  "nombre": "Desnudo",
+  "precio": 10.99,
+  "rutaFoto": "https://www.tierraburritos.com/wp-content/uploads/Desnudo_1-2.jpg",
+  "ingredientes": [
+    {
+      "$oid": "68c94e2c46dcb90c93986244"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c93986247"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c9398624a"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c9398624d"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c9398624e"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c93986257"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "68c956b046dcb90c93986278"
+  },
+  "nombre": "Ensalada",
+  "precio": 9.99,
+  "rutaFoto": "https://www.tierraburritos.com/wp-content/uploads/Ensalada_1-2.jpg",
+  "ingredientes": [
+    {
+      "$oid": "68c94e2c46dcb90c93986244"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c93986249"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c9398624a"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c9398624c"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c9398624d"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c9398624e"
+    },
+    {
+      "$oid": "68c94e2c46dcb90c93986250"
+    }
+  ]
+}]

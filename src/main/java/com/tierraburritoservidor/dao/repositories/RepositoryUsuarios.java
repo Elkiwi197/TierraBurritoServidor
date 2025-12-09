@@ -7,13 +7,11 @@ import com.mongodb.client.model.Filters;
 import com.tierraburritoservidor.common.Constantes;
 import com.tierraburritoservidor.common.ConstantesInfo;
 import com.tierraburritoservidor.dao.RepositoryUsuariosInterface;
-import com.tierraburritoservidor.dao.model.PedidoDB;
 import com.tierraburritoservidor.dao.model.UsuarioDB;
 import com.tierraburritoservidor.dao.util.DocumentPojoParser;
 import com.tierraburritoservidor.dao.util.UserIdManager;
 import com.tierraburritoservidor.errors.exceptions.CorreoYaExisteException;
 import com.tierraburritoservidor.errors.exceptions.UsuarioNoEncontradoException;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.bson.Document;
@@ -50,9 +48,8 @@ public class RepositoryUsuarios implements RepositoryUsuariosInterface {
     @Override
     public void inicializarUsuarios() {
         try {
-            List<UsuarioDB> usuarios = new ArrayList<>();
             Query query = new Query();
-            usuarios = mongoTemplate.find(query, UsuarioDB.class, COLLECTION_NAME);
+            List<UsuarioDB> usuarios = mongoTemplate.find(query, UsuarioDB.class, COLLECTION_NAME);
 
             usuarios.forEach(usuario -> {
                 if (userIdManager.getId(usuario.get_id()) == null) {
